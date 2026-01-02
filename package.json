@@ -1,0 +1,20 @@
+{
+	"name": "sql",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "node --watch src/app.js",
+		"query": "node --watch src/commands/query.js",
+		"test:update": "node src/scripts/test-updates.js",
+		"seed": "node src/scripts/reset-db.js",
+		"reset": "node src/scripts/reset-db.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"better-sqlite3": "^12.5.0"
+	}
+}
