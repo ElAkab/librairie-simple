@@ -19,7 +19,7 @@ const createBookTable = `
         title TEXT NOT NULL,
         author_id INTEGER NOT NULL,
         year INTEGER,
-        FOREIGN KEY (author_id) REFERENCES authors(id),
+        FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE,
         UNIQUE(title, author_id) -- Un livre unique par auteur
     )
 `;
@@ -30,7 +30,8 @@ const createLoanTable = `
         book_id INTEGER NOT NULL,
         borrower_name TEXT,
         borrowed_date DATE,
-        return_date DATE
+        return_date DATE,
+        FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
     )
 `;
 
