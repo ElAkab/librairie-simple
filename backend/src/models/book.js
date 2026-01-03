@@ -10,7 +10,7 @@ class Book {
 
 		// Exécuter la requête avec les valeurs fournies
 		const newBook = stmt.run(title, authorId, year);
-		return newBook.lastInsertRowid;
+		return newBook.lastInsertRowid; // Retourner l'ID du nouveau livre car
 	}
 
 	// Récupérer tous les livres

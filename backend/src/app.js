@@ -1,40 +1,27 @@
 // import Author from "./models/author.js";
 import Book from "./models/book.js";
-import db from "./db/connection.js";
 import { seedDatabase } from "./db/seeds/seed.js";
-import {
-	findAvailableBooks,
-	findOverdueLoans,
-	findBooksByAuthor,
-	deleteAuthorWithBooks,
-} from "./commands/query.js";
+import express from "express";
+import bookRouter from "./routes/books.js";
+import authorsRouter from "./routes/authors.js";
 
-console.log("=== Gestion de bibliothèque ===");
+// "seedDatabase()" pour initialiser la base de données avec des données de test
+// if (Book.count() === 0) seedDatabase();
 
-if (Book.count() === 0) seedDatabase();
+const app = express();
+app.use(express.json());
 
-// Récupérer et afficher les livres disponibles
-// findAvailableBooks();
+const PORT = process.env.PORT || 3000;
 
-// Récupérer et afficher les emprunts en retard
-// findOverdueLoans();
+app.get("/", (req, res) => {
+	console.log("Yes !");
+	res.status(200).send("Library Management API is running.");
+	// Future page d'accueil
+});
 
-findBooksByAuthor(5);
+app.use("/api/books", bookRouter);
+app.use("/api/authors", authorsRouter);
 
-// =============================================
-// Pour vérifier le contenu de la base de données après le seed
-// =============================================
-// console.log("\nLivres :");
-// console.table(db.prepare("SELECT * FROM books").all());
-
-// console.log("\nAuteurs :");
-// console.table(db.prepare("SELECT * FROM authors").all());
-
-// console.log("\nEmprunts :");
-// console.table(db.prepare("SELECT * FROM loans").all());
-
-// Trouver les livres d'un auteur spécifique (ici auteur ID 3)
-// findBooksByAuthor(3);
-
-// Test de suppression en cascade
-// deleteAuthorWithBooks(3);
+app.listen(PORT, () => {
+	console.log(`Server is running on http://localhost:${PORT}`);
+});

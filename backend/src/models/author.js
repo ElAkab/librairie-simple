@@ -24,7 +24,7 @@ class Author {
 			WHERE id = ?
 		`);
 		const result = stmt.run(firstName, lastName, nationality, id);
-		return result.changes;
+		return result.changes; // Nombre de lignes modifiées
 	}
 
 	static deleteById(id) {

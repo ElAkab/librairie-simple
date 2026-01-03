@@ -112,7 +112,6 @@ export function deleteAuthorWithBooks(authorId) {
 }
 
 // Supprimer un livre et tous ses emprunts en une transaction atomique. Tester le rollback en cas d'erreur.
-// ? Version simplifiée (équivalente)
 export function deleteBookWithLoans(bookId) {
 	try {
 		const book = db.prepare("SELECT title FROM books WHERE id = ?").get(bookId);
