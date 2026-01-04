@@ -1,11 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Bibliothèque | Accueil</title>
+		<link rel="stylesheet" href="./src/style.css" />
 	</head>
 	<body>
-		<h1>Bienvenue à la Bibliothèque</h1>
+		<header>
+			<nav>
+				<a href="/">Accueil</a>
+				<a href="/books.html">Livres</a>
+				<a href="/authors.html">Auteurs</a>
+			</nav>
+		</header>
+
+		<main class="main-container">
+			<h1>📚 Euh.. c'est une bibliothèque ici</h1>
+			<span><i>Donc faudrait la fermer un moment..</i></span>
+			<section id="container"></section>
+
+			<div class="navigation-buttons">
+				<button id="gauche">Gauche</button>
+				<button id="droite">Droite</button>
+			</div>
+		</main>
+
+		<script src="./src/main.js" type="module"></script>
 	</body>
 </html>

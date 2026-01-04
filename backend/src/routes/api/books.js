@@ -1,11 +1,11 @@
 import express from "express";
-import Book from "../models/book.js";
-import { deleteBookWithLoans } from "../commands/query.js";
+import Book from "../../models/book.js";
+import { deleteBookWithLoans } from "../../commands/query.js";
 
-const bookRouter = express.Router();
+const apibookRouter = express.Router();
 
 // Récupérer tous les livres
-bookRouter.get("/", (req, res) => {
+apibookRouter.get("/", (req, res) => {
 	try {
 		const table = Book.findAll();
 
@@ -18,7 +18,7 @@ bookRouter.get("/", (req, res) => {
 });
 
 // Créer un nouveau livre
-bookRouter.post("/", (req, res) => {
+apibookRouter.post("/", (req, res) => {
 	try {
 		const { title, authorId, year } = req.body;
 
@@ -36,7 +36,7 @@ bookRouter.post("/", (req, res) => {
 });
 
 // Mettre à jour un livr
-bookRouter.put("/:id", (req, res) => {
+apibookRouter.put("/:id", (req, res) => {
 	try {
 		const { title, year } = req.body;
 		const id = req.params.id;
@@ -60,7 +60,7 @@ bookRouter.put("/:id", (req, res) => {
 });
 
 // Supprimer un livre et ses emprunts associés
-bookRouter.delete("/:id", (req, res) => {
+apibookRouter.delete("/:id", (req, res) => {
 	try {
 		const id = req.params.id;
 
@@ -81,7 +81,7 @@ bookRouter.delete("/:id", (req, res) => {
 });
 
 // Récupérer tous les livres
-bookRouter.get("/all", (req, res) => {
+apibookRouter.get("/all", (req, res) => {
 	try {
 		const books = Book.findAll();
 		res.status(200).json(books);
@@ -92,7 +92,7 @@ bookRouter.get("/all", (req, res) => {
 });
 
 // Récupérer un livre par son ID
-bookRouter.get("/:id", (req, res) => {
+apibookRouter.get("/:id", (req, res) => {
 	try {
 		const id = req.params.id;
 		const book = Book.findById(id);
@@ -107,4 +107,4 @@ bookRouter.get("/:id", (req, res) => {
 	}
 });
 
-export default bookRouter;
+export default apibookRouter;
