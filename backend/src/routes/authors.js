@@ -3,6 +3,7 @@ import Author from "../models/author.js";
 
 const authorsRouter = express.Router();
 
+// Récupération de tous les auteurs
 authorsRouter.get("/", (req, res) => {
 	try {
 		const table = Author.findAll();
@@ -15,6 +16,7 @@ authorsRouter.get("/", (req, res) => {
 	}
 });
 
+// Création d'un nouvel auteur
 authorsRouter.post("/", (req, res) => {
 	try {
 		const { firstName, lastName, birth_year, nationality } = req.body;
@@ -42,6 +44,7 @@ authorsRouter.post("/", (req, res) => {
 	}
 });
 
+// Récupération d'un auteur par son ID
 authorsRouter.get("/:id", (req, res) => {
 	try {
 		const id = req.params.id;
@@ -57,6 +60,7 @@ authorsRouter.get("/:id", (req, res) => {
 	}
 });
 
+// Mise à jour d'un auteur
 authorsRouter.put("/:id", (req, res) => {
 	try {
 		const { firstName, lastName, nationality } = req.body;
@@ -76,6 +80,30 @@ authorsRouter.put("/:id", (req, res) => {
 	} catch (error) {
 		console.error("Erreur lors de la mise à jour de l'auteur :", error);
 		res.status(500).json({ message: "Impossible de mettre à jour l'auteur." });
+	}
+});
+
+// Suppression d'un auteur
+authorsRouter.delete("/:id", (req, res) => {
+	try {
+		const id = req.params.id;
+
+		if (!id)
+			return res.status(400).json({
+				message: "Aucune correspondance trouvé pour la suppression :/",
+			});
+
+		const change = Author.deleteById(id);
+		res.status(200).json({
+			message: "Auteur supprimé avec succès.",
+			change: change,
+		});
+	} catch (error) {
+		console.error(
+			"Erreur lors de la suppression de l'auteur putain... :",
+			error
+		);
+		res.status(500).json({ message: "Impossible de supprimer l'auteur.." });
 	}
 });
 

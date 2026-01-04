@@ -1,16 +1,18 @@
 ### Test de la route racine
 GET http://localhost:3000/
 
-### Création d'un auteur
-POST http://localhost:3000/api/authors
-Content-Type: application/json
+###############################################
+# BOOKS ROUTES
+###############################################
 
-{
-    "firstName": "Barak",
-    "lastName": "Obama",
-    "birth_year": 1802,
-    "nationality": "French"
-}
+### Récupère la liste des livres
+GET http://localhost:3000/api/books
+
+### Récupère tous les livres (endpoint alternatif)
+GET http://localhost:3000/api/books/all
+
+### Récupère le livre avec l'ID 6
+GET http://localhost:3000/api/books/6
 
 ### Création d'un livre
 POST http://localhost:3000/api/books
@@ -22,8 +24,22 @@ Content-Type: application/json
     "year": 2024
 }
 
-### Récupère la liste des livres
-GET http://localhost:3000/api/books
+### Modification d'un livre
+PUT http://localhost:3000/api/books/11
+Content-Type: application/json
+
+{
+    "id": 11,
+    "title": "Voilà un meilleur titre MDFK",
+    "year": 2024
+}
+
+### Suppression d'un livre
+DELETE http://localhost:3000/api/books/2
+
+###############################################
+# AUTHORS ROUTES
+###############################################
 
 ### Récupère la liste des auteurs
 GET http://localhost:3000/api/authors
@@ -31,7 +47,18 @@ GET http://localhost:3000/api/authors
 ### Récupère un auteur de par son id
 GET http://localhost:3000/api/authors/8
 
-### Met à jour l'auteur avec l'ID 8
+### Création d'un auteur
+POST http://localhost:3000/api/authors
+Content-Type: application/json
+
+{
+    "firstName": "Barak",
+    "lastName": "Obama",
+    "birth_year": 1961,
+    "nationality": "American"
+}
+
+### Modification de l'auteur (id 8)
 PUT http://localhost:3000/api/authors/8
 Content-Type: application/json
 
@@ -41,8 +68,5 @@ Content-Type: application/json
     "nationality": "American"
 }
 
-### Récupère tous les livres (endpoint alternatif)
-GET http://localhost:3000/api/books/all
-
-### Récupère le livre avec l'ID 6
-GET http://localhost:3000/api/books/6
+### Suppression d'un auteur
+DELETE http://localhost:3000/api/authors/1

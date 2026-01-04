@@ -15,18 +15,7 @@ class Book {
 
 	// Récupérer tous les livres
 	static findAll() {
-		return db
-			.prepare(
-				`
-			SELECT
-				books.*,
-				authors.firstName,
-				authors.lastName
-			FROM books
-			LEFT JOIN authors ON books.author_id = authors.id
-		`
-			)
-			.all();
+		return db.prepare(`SELECT * FROM books`).all();
 	}
 
 	// Trouver un livre par son ID
@@ -35,13 +24,13 @@ class Book {
 	}
 
 	// Mettre à jour un livre par son ID
-	static updateBook(id, title, year) {
+	static updateBook(title, year, id) {
 		const stmt = db.prepare(`
 			UPDATE books
 			SET (title, year) = (?, ?)
 			WHERE id = ?
 		`);
-		const result = stmt.run(id, title, year);
+		const result = stmt.run(title, year, id);
 		return result.changes;
 	}
 
