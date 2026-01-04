@@ -10,7 +10,7 @@ class Author {
 	}
 
 	static findAll() {
-		return db.prepare(`SELECT * FROM authors`).all();
+		return db.prepare(`SELECT * FROM authors LIMIT 6`).all();
 	}
 
 	static findById(id) {

@@ -21,9 +21,14 @@ export default function createCard(title, year, author) {
 	return `
     <div class="card">
         <img src="${imageUrl}" alt="Book cover" />
-        <h3>${title}</h3>
-        <p>By <span class="author">${author}</span></p>
-        <span>Publié en  ${year}</span>
+        <h3 class="book-title">${title}</h3>
+		<hr />
+
+		<div class="book-info">
+			<span class="author">${author}</span>
+
+			<span class="published">Publié en <span class="year">${year}</span></span>
+		</div>
     </div>
     `;
 }
