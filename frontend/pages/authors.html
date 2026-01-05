@@ -8,15 +8,63 @@
 	</head>
 	<body>
 		<header>
+			<div>
+				<input type="search" placeholder="Il te faut quoi encore..." />
+				<button>🔍</button>
+			</div>
+
 			<nav>
 				<a href="/">Accueil</a>
-				<a href="/books.html">Livres</a>
-				<a href="/authors.html">Auteurs</a>
+				<a href="./authors.html">Auteurs</a>
+				<a href="./form.html">Formulaire</a>
 			</nav>
 		</header>
 
 		<main class="main-container">
 			<h1>👩‍🏫 Nos Auteurs</h1>
+
+			<button onclick="modal.showModal()" class="filter-button">Filtrer</button>
+
+			<dialog id="modal">
+				<h2 id="title">Filtrer par :</h2>
+				<form method="dialog">
+					<fieldset class="fieldset-filter">
+						<legend>Nationalité :</legend>
+						<label
+							><input type="checkbox" name="nationality" value="français" />
+							Français</label
+						>
+						<label
+							><input type="checkbox" name="nationality" value="américain" />
+							Américain</label
+						>
+						<label
+							><input type="checkbox" name="nationality" value="britannique" />
+							Britannique</label
+						>
+					</fieldset>
+					<br />
+					<fieldset class="fieldset-filter">
+						<legend>Année de naissance :</legend>
+						<label
+							><input type="checkbox" name="birth_year" value="1900-1950" />
+							1900-1950</label
+						>
+						<label
+							><input type="checkbox" name="birth_year" value="1951-2000" />
+							1951-2000</label
+						>
+						<label
+							><input type="checkbox" name="birth_year" value="2001-present" />
+							2001-présent</label
+						>
+					</fieldset>
+					<br />
+					<button type="submit">Appliquer</button>
+				</form>
+				<br />
+				<button id="close-button" onclick="modal.close()">X</button>
+			</dialog>
 			<span><i>Découvrez les écrivains derrière nos livres</i></span>
 			<hr />
 			<section id="authors-field"></section>
