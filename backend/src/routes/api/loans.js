@@ -6,6 +6,8 @@ const loansRouter = express.Router();
 // Récupérer tous les emprunts
 loansRouter.get("/", (req, res) => {
 	try {
+		console.log(req.query);
+
 		const loans = Loan.findAll();
 		console.table(loans);
 		res.status(200).json(loans);
@@ -29,7 +31,7 @@ loansRouter.get("/:id", (req, res) => {
 
 		const loans = Loan.findById(id);
 		console.table(loans);
-		res.status(200).json({ loans: loans });
+		res.status(200).json(loans);
 	} catch (error) {
 		console.error("Erreur lors de la récupération de l'emprunt", error);
 		res

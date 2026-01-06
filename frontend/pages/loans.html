@@ -22,22 +22,25 @@
 
 		<main class="main-container">
 			<!-- Filter Section -->
-			<section class="filter-field">
+			<form class="filter-field">
 				<div id="filter-controls">
+					<!-- Critères de nom de livre -->
 					<div class="book-name">
 						<input
 							type="text"
-							id="book-search"
+							id="book-name-input"
 							placeholder="Rechercher un livre..."
 						/>
 					</div>
-					<div class="borrower-name">
+					<!-- Critères de nom d'emprunteur -->
+					<div class="borrower-name-input">
 						<input
 							type="text"
-							id="borrower-search"
+							id="borrower-name-input"
 							placeholder="Nom de l'emprunteur..."
 						/>
 					</div>
+					<!-- Critères de statut d'emprunt -->
 					<div class="loan-status">
 						<div>
 							<input
@@ -77,6 +80,7 @@
 							<label for="status-overdue">En retard</label>
 						</div>
 					</div>
+					<!-- Critères de plage de dates -->
 					<div class="date-range">
 						<div id="date-from-container">
 							<label for="date-from">Date de début :</label>
@@ -89,10 +93,10 @@
 					</div>
 				</div>
 				<div class="filter-actions">
-					<button type="button" id="apply-filters">Filtrer</button>
+					<button type="submit" id="apply-filters">Filtrer</button>
 					<button type="button" id="reset-filters">Réinitialiser</button>
 				</div>
-			</section>
+			</form>
 
 			<hr />
 
@@ -106,6 +110,37 @@
 					<button id="droite">Droite</button>
 				</div>
 			</section>
+
+			<dialog id="edit-loan-modal">
+				<h3>Modifier l'emprunt</h3>
+				<hr />
+				<form id="edit-loan-form">
+					<div>
+						<label for="edit-loan-status">Statut :</label>
+						<div>
+							<select id="edit-loan-status" name="status">
+								<option value="active">En cours</option>
+								<option value="returned">Retourné</option>
+								<option value="overdue">En retard</option>
+							</select>
+						</div>
+					</div>
+					<hr />
+					<label for="borrower-name">Nom de l'emprunteur :</label>
+					<input
+						type="text"
+						id="borrower-name"
+						name="borrower-name"
+						placeholder="Normalement, y'a déja un nom"
+					/>
+					<hr />
+					<label for="return-date">Date de retour</label>
+					<input type="date" id="return-date" name="return-date" />
+
+					<button type="submit">Enregistrer</button>
+					<button type="button" id="close-modal">Annuler</button>
+				</form>
+			</dialog>
 		</main>
 
 		<script src="../src/loans.js"></script>

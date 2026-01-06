@@ -6,7 +6,7 @@ GET http://localhost:3000/
 ###############################################
 
 ### Récupère la liste des livres
-GET http://localhost:3000/api/books
+GET http://localhost:3000/api/books/
 
 ### Récupère tous les livres (endpoint alternatif)
 GET http://localhost:3000/api/books/all
@@ -89,7 +89,7 @@ Content-Type: application/json
 }
 
 ### // Récupérer un emprunt par son ID
-GET http://localhost:3000/api/loans/10
+GET http://localhost:3000/api/loans/3
 
 ### // Mettre à jour un emprunt (retour de livre)
 PUT http://localhost:3000/api/loans/10

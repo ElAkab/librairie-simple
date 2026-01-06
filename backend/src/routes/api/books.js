@@ -8,13 +8,13 @@ const apibookRouter = express.Router();
 apibookRouter.get("/", (req, res) => {
 	try {
 		const table = `
-		SELECT books.*,
-			authors.firstName,
-			authors.lastName
-			FROM books JOIN authors 
-		ON books.author_id = authors.id
-		LIMIT 6
-		`;
+	SELECT books.*,
+		authors.firstName,
+		authors.lastName
+		FROM books JOIN authors
+	ON books.author_id = authors.id
+	LIMIT 6
+	`;
 
 		const books = customQuery(table);
 
