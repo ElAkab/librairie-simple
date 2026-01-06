@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Bibliothèque | Emprunts</title>
+		<link rel="stylesheet" href="../src/loans.css" />
+	</head>
+	<body>
+		<header>
+			<div>
+				<input type="search" placeholder="Il te faut quoi encore..." />
+				<button>🔍</button>
+			</div>
+
+			<nav>
+				<a href="/">Accueil</a>
+				<a href="./authors.html">Auteurs</a>
+				<a href="./form.html">Formulaire</a>
+			</nav>
+		</header>
+
+		<main class="main-container">
+			<!-- Filter Section -->
+			<section class="filter-field">
+				<div id="filter-controls">
+					<div class="book-name">
+						<input
+							type="text"
+							id="book-search"
+							placeholder="Rechercher un livre..."
+						/>
+					</div>
+					<div class="borrower-name">
+						<input
+							type="text"
+							id="borrower-search"
+							placeholder="Nom de l'emprunteur..."
+						/>
+					</div>
+					<div class="loan-status">
+						<div>
+							<input
+								type="radio"
+								id="status-all"
+								name="status"
+								value=""
+								checked
+							/>
+							<label for="status-all">Tous</label>
+							<br />
+
+							<input
+								type="radio"
+								id="status-active"
+								name="status"
+								value="active"
+							/>
+							<label for="status-active">En cours</label>
+							<br />
+
+							<input
+								type="radio"
+								id="status-returned"
+								name="status"
+								value="returned"
+							/>
+							<label for="status-returned">Retourné</label>
+							<br />
+
+							<input
+								type="radio"
+								id="status-overdue"
+								name="status"
+								value="overdue"
+							/>
+							<label for="status-overdue">En retard</label>
+						</div>
+					</div>
+					<div class="date-range">
+						<div id="date-from-container">
+							<label for="date-from">Date de début :</label>
+							<input type="date" id="date-from" />
+						</div>
+						<div id="date-to-container">
+							<label for="date-to">Date de fin :</label>
+							<input type="date" id="date-to" />
+						</div>
+					</div>
+				</div>
+				<div class="filter-actions">
+					<button type="button" id="apply-filters">Filtrer</button>
+					<button type="button" id="reset-filters">Réinitialiser</button>
+				</div>
+			</section>
+
+			<hr />
+
+			<!-- Emprunts Section -->
+			<section class="loans-field">
+				<h2>Emprunts</h2>
+				<div id="loans"></div>
+
+				<div class="navigation-buttons">
+					<button id="gauche">Gauche</button>
+					<button id="droite">Droite</button>
+				</div>
+			</section>
+		</main>
+
+		<script src="../src/loans.js"></script>
+	</body>
+</html>

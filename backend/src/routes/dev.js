@@ -9,14 +9,11 @@ const devRouter = express.Router();
 // Route de test SQL
 devRouter.get("/test", (_req, res) => {
 	try {
+		// Requête pour trouver les auteurs et leurs livres.
 		const query = customQuery(`
-			SELECT authors.id, authors.firstName, authors.lastName FROM authors
+			SELECT authors.id AS author_id, authors.firstName || ' ' || authors.lastName AS author_name, books.title AS book_title, books.id AS book_id
+			FROM authors
 			JOIN books ON authors.id = books.author_id
-			WHERE author_id IN (
-				SELECT author_id FROM books
-				GROUP BY author_id
-				HAVING COUNT(author_id) > 1
-			)
 			GROUP BY authors.id;
 		`);
 

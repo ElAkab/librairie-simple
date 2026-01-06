@@ -19,6 +19,7 @@ const createBookTable = `
         title TEXT NOT NULL,
         author_id INTEGER NOT NULL,
         year INTEGER,
+        available BOOLEAN DEFAULT 1,
         FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE,
         UNIQUE(title, author_id) -- Un livre unique par auteur
     )

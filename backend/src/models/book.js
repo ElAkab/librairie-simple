@@ -15,16 +15,7 @@ class Book {
 
 	// Récupérer tous les livres
 	static findAll() {
-		return db
-			.prepare(
-				`SELECT books.*,
-				authors.firstName,
-				authors.lastName
-				FROM books JOIN authors 
-				ON books.author_id = authors.id
-				LIMIT 6`
-			)
-			.all();
+		return db.prepare(`SELECT * FROM books`).all();
 	}
 
 	// Trouver un livre par son ID

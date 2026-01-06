@@ -1,11 +1,10 @@
 // import Author from "./models/author.js";
-import Author from "./models/author.js";
 import Book from "./models/book.js";
-import Loan from "./models/loan.js";
 import { seedDatabase } from "./db/seeds/seed.js";
 import express from "express";
-import apiBookRouter from "./routes/api/books.js";
 import authorsRouter from "./routes/api/authors.js";
+import apiBookRouter from "./routes/api/books.js";
+import loansRouter from "./routes/api/loans.js";
 import devRouter from "./routes/dev.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -22,8 +21,9 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // Routes API
-app.use("/api/books", apiBookRouter);
 app.use("/api/authors", authorsRouter);
+app.use("/api/books", apiBookRouter);
+app.use("/api/loans", loansRouter);
 
 // Routes de développement/debug
 app.use(devRouter);

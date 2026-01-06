@@ -59,7 +59,7 @@ const modal = document.getElementById("modal");
 const form = modal.querySelector("form");
 
 // Intercepter la validation du formulaire
-modal.addEventListener("close", () => {
+modal.addEventListener("submit", () => {
 	const formData = new FormData(form); // Récupère les données du formulaire
 
 	const filters = {
@@ -67,8 +67,6 @@ modal.addEventListener("close", () => {
 		birthYear: formData.getAll("birth_year"),
 	};
 
-	// Log des données du formulaire
-	console.log(formData);
 	// Log des filtres sélectionnés
 	console.log(filters);
 });

@@ -11,8 +11,8 @@ GET http://localhost:3000/api/books
 ### Récupère tous les livres (endpoint alternatif)
 GET http://localhost:3000/api/books/all
 
-### Récupère le livre avec l'ID 6
-GET http://localhost:3000/api/books/6
+### Récupère le livre avec l'ID 5
+GET http://localhost:3000/api/books/5
 
 ### Création d'un livre
 POST http://localhost:3000/api/books
@@ -45,7 +45,7 @@ DELETE http://localhost:3000/api/books/2
 GET http://localhost:3000/api/authors
 
 ### Récupère un auteur de par son id
-GET http://localhost:3000/api/authors/8
+GET http://localhost:3000/api/authors/4
 
 ### Création d'un auteur
 POST http://localhost:3000/api/authors
@@ -70,3 +70,46 @@ Content-Type: application/json
 
 ### Suppression d'un auteur
 DELETE http://localhost:3000/api/authors/1
+
+###############################################
+# LOANS ROUTES
+###############################################
+### Récupère la liste des prêts
+GET http://localhost:3000/api/loans
+
+### Créer un nouvel emprunt
+POST http://localhost:3000/api/loans
+Content-Type: application/json
+
+{
+    "book_id": 1,
+    "borrower_name": "Bob L'éponge",
+    "borrowed_date": "2024-02-26",
+    "return_date": "2024-03-26"
+}
+
+### // Récupérer un emprunt par son ID
+GET http://localhost:3000/api/loans/10
+
+### // Mettre à jour un emprunt (retour de livre)
+PUT http://localhost:3000/api/loans/10
+Content-Type: application/json
+
+{
+    "borrower_name": "Bob L'éponge",
+    "borrowed_date": "2025-12-26",
+    "return_date": "2026-02-26",
+    "id": 10
+}
+
+### // Supprimer un emprunt (retour de livre)
+DELETE http://localhost:3000/api/loans/5
+
+### // Supprimer tous les emprunts
+DELETE http://localhost:3000/api/loans
+
+###############################################
+# DEV ROUTES
+###############################################
+### Route de test SQL
+GET http://localhost:3000/all

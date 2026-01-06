@@ -1,16 +1,25 @@
 import express from "express";
 import Book from "../../models/book.js";
-import { deleteBookWithLoans } from "../../commands/query.js";
+import { deleteBookWithLoans, customQuery } from "../../commands/query.js";
 
 const apibookRouter = express.Router();
 
 // Récupérer tous les livres
 apibookRouter.get("/", (req, res) => {
 	try {
-		const table = Book.findAll();
+		const table = `
+		SELECT books.*,
+			authors.firstName,
+			authors.lastName
+			FROM books JOIN authors 
+		ON books.author_id = authors.id
+		LIMIT 6
+		`;
 
-		console.table(table);
-		res.status(200).json(table);
+		const books = customQuery(table);
+
+		console.table(books);
+		res.status(200).json(books);
 	} catch (error) {
 		console.error("Erreur lors de la récupération des livres :", error);
 		res.status(500).json({ message: "Impossible de récupérer les livres." });
