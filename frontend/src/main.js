@@ -17,8 +17,9 @@ async function init() {
 			const title = element.title;
 			const year = element.year;
 			const author = element.firstName + " " + element.lastName;
+			const available = element.available;
 
-			const cardHTML = createCard(title, year, author);
+			const cardHTML = createCard(title, year, author, available);
 			app.innerHTML += cardHTML;
 		});
 	} catch (error) {

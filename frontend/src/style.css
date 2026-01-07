@@ -101,6 +101,7 @@ span {
 
 .card {
 	background: white;
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	border: 1px solid #ddd;
@@ -117,6 +118,26 @@ span {
 	cursor: pointer;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 	transform: translateY(-5px);
+}
+
+.availability {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	padding: 5px 10px;
+	border-radius: 12px;
+	color: white;
+	font-size: 12px;
+	font-weight: bold;
+	z-index: 10;
+}
+
+.available {
+	background-color: green;
+}
+
+.unavailable {
+	background-color: red;
 }
 
 hr {

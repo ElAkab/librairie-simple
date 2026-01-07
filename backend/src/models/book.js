@@ -43,6 +43,17 @@ class Book {
 	static count() {
 		return db.prepare("SELECT COUNT(*) as total FROM books").get().total;
 	}
+
+	// Mettre à jour la disponibilité d'un livre
+	static updateAvailability(bookId, available) {
+		const stmt = db.prepare(`
+			UPDATE books
+			SET available = ?
+			WHERE id = ?
+		`);
+		const result = stmt.run(available ? 1 : 0, bookId);
+		return result.changes;
+	}
 }
 
 export default Book;

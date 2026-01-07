@@ -73,7 +73,7 @@ loansRouter.post("/", (req, res) => {
 loansRouter.put("/:id", (req, res) => {
 	try {
 		const id = req.params.id;
-		const { borrower_name, borrowed_date, return_date } = req.body;
+		const { borrower_name, loan_status, return_date } = req.body;
 
 		if (!id)
 			return res
@@ -82,7 +82,7 @@ loansRouter.put("/:id", (req, res) => {
 
 		const updatedLoan = Loan.updateLoan(
 			borrower_name,
-			borrowed_date,
+			loan_status,
 			return_date,
 			id
 		);
@@ -96,6 +96,44 @@ loansRouter.put("/:id", (req, res) => {
 		res
 			.status(500)
 			.json({ message: "Erreur lors de la mise à jour de l'emprunt" });
+	}
+});
+
+// Mettre à jour partiellement un emprunt par son ID (PATCH)
+loansRouter.patch("/:id", (req, res) => {
+	try {
+		const id = req.params.id;
+		const { borrower_name, status, return_date } = req.body;
+
+		if (!id)
+			return res
+				.status(400)
+				.json({ message: "Aucune correspondance avec cet ID :/.." });
+
+		// Récupérer l'emprunt actuel pour garder les valeurs non modifiées
+		const currentLoan = Loan.findById(id);
+		if (!currentLoan)
+			return res.status(404).json({ message: "Emprunt introuvable" });
+
+		const updatedLoan = Loan.updateLoan(
+			borrower_name || currentLoan.borrower_name,
+			status || currentLoan.loan_status,
+			return_date !== undefined ? return_date : currentLoan.return_date,
+			id
+		);
+		console.log(updatedLoan);
+		res.status(200).json({
+			message: "Emprunt mis à jour avec succès",
+			changes: updatedLoan,
+			details: [borrower_name, status, return_date],
+		});
+	} catch (error) {
+		console.error("Erreur lors de la mise à jour de l'emprunt", error);
+		res
+			.status(500)
+			.json({
+				message: error.message || "Erreur lors de la mise à jour de l'emprunt",
+			});
 	}
 });
 

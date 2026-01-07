@@ -30,6 +30,7 @@ const createLoanTable = `
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         book_id INTEGER NOT NULL,
         borrower_name TEXT,
+        loan_status TEXT,
         borrowed_date DATE,
         return_date DATE,
         FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE

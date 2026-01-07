@@ -1,6 +1,5 @@
 const loansContainer = document.getElementById("loans");
 const applyFiltersButton = document.getElementById("apply-filters");
-const deleteLoanButtons = document.getElementsByClassName("delete-loan-button");
 
 // ======== Appliquer les filtres ========
 applyFiltersButton.addEventListener("click", async (e) => {
@@ -30,7 +29,7 @@ applyFiltersButton.addEventListener("click", async (e) => {
 	if (dateFrom) params.append("date_from", dateFrom);
 	if (dateTo) params.append("date_to", dateTo);
 
-	// todo 3: Récupérer les emprunts filtrés depuis l'API (fait à moitié => trouver un moyen d'adapter le backend ou carrément créer une nouvelle route)
+	// todo : Récupérer les emprunts filtrés depuis l'API (fait à moitié => trouver un moyen d'adapter le backend ou carrément créer une nouvelle route)
 	try {
 		const req = await fetch(`/api/loans?${params.toString()}`);
 		if (!req.ok) throw new Error("Erreur avec l'API");
@@ -80,6 +79,31 @@ closeModalBtn.addEventListener("click", () => {
 
 // Ouvrir la modale et remplir le formulaire
 loansContainer.addEventListener("click", async (e) => {
+	// Gérer la suppression d'un emprunt
+	if (e.target.classList.contains("delete-loan-button")) {
+		const loanCard = e.target.closest(".loan-card");
+		if (!loanCard) return;
+
+		const loanId = loanCard.dataset.loanId;
+
+		if (!confirm("Voulez-vous vraiment supprimer cet emprunt ?")) return;
+
+		try {
+			const req = await fetch(`/api/loans/${loanId}`, {
+				method: "DELETE",
+			});
+			if (!req.ok) throw new Error("Erreur lors de la suppression");
+
+			console.log("Emprunt supprimé, ID:", loanId);
+			loanCard.remove();
+		} catch (error) {
+			console.error("Erreur:", error);
+			alert("Impossible de supprimer l'emprunt");
+		}
+		return;
+	}
+
+	// Gérer l'ouverture de la modale pour édition
 	const loanCard = e.target.closest(".loan-card");
 	if (!loanCard) return;
 
@@ -91,7 +115,7 @@ loansContainer.addEventListener("click", async (e) => {
 		const req = await fetch(`/api/loans/${loanId}`);
 		if (!req.ok) throw new Error("Erreur lors de la récupération de l'emprunt");
 		const loan = await req.json();
-		
+
 		// "loan" contiendra "{
 		//   "id": 3,
 		//   "book_id": 3,
@@ -105,7 +129,7 @@ loansContainer.addEventListener("click", async (e) => {
 		const borrowerNameInput = document.getElementById("borrower-name");
 		const returnDateInput = document.getElementById("return-date");
 
-		editLoanStatusInput.value = loan.status || "active";
+		editLoanStatusInput.value = loan.loan_status || "active";
 		borrowerNameInput.value = loan.borrower_name || "";
 		returnDateInput.value = loan.return_date || "";
 
@@ -134,37 +158,26 @@ editLoanForm.addEventListener("submit", async (e) => {
 		return_date: returnDate || null,
 	};
 
-	// todo 1: valider les données du formulaire => verifier qu'il y a bien eu des modifications
-	if (!formData.borrower_name || !formData.return_date) {
-		console.log(
-			"Soumission du formulaire pour l'emprunt ID:",
-			loanId,
-			formData
-		);
+	try {
+		const req = await fetch(`/api/loans/${loanId}`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(formData),
+		});
+
+		if (!req.ok) throw new Error("Erreur lors de la mise à jour");
+
+		const result = await req.json();
+		console.log("Emprunt mis à jour:", result);
+
+		//  Fermer la modale et recharger les emprunts
 		modal.close();
-	} else {
-		// alert("Veuillez modifier un truc putain de merde.");
-		return;
+		loansContainer.innerHTML = "";
+		init();
+	} catch (error) {
+		console.error("Erreur:", error);
+		alert("Impossible de mettre à jour l'emprunt");
 	}
-
-	// todo 2: Vérifier le code ci-dessous pour la mise à jour de l'emprunt (fait par l'IA)
-	// try {
-	// 	const req = await fetch(`/api/loans/${loanId}`, {
-	// 		method: "PATCH",
-	// 		headers: { "Content-Type": "application/json" },
-	// 		body: JSON.stringify(formData),
-	// 	});
-
-	// 	if (!req.ok) throw new Error("Erreur lors de la mise à jour");
-
-	//  Fermer la modale et recharger les emprunts
-	// 	modal.close();
-	// 	loansContainer.innerHTML = "";
-	// 	init();
-	// } catch (error) {
-	// 	console.error("Erreur:", error);
-	// 	alert("Impossible de mettre à jour l'emprunt");
-	// }
 });
 
 // ======= Fonctions ========

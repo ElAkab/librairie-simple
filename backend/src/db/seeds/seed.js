@@ -30,13 +30,6 @@ export function seedDatabase() {
 	const book9 = Book.createBook("The company said the same", author1, 1945);
 
 	// Créer les emprunts : 1 id du livre, 2 nom de l'emprunteur, 3 date d'emprunt, 4 date de retour (null si pas encore retourné)
-	Loan.createLoan(book1, "Itler Adolf", "2025-06-23", null); // ! Toujours emprunté
-	Loan.createLoan(book2, "Winston Smith", "2025-01-15", "2025-02-15"); // ? Retourné
-	Loan.createLoan(book3, "Napoleon Pig", "2025-02-01", "2025-03-01"); // ? Retourné
-	Loan.createLoan(book4, "Elizabeth Bennet", "2025-01-20", "2025-02-20"); // ? Retourné
+	Loan.createLoan(book4, "Elizabeth Bennet", "2025-01-20", "2025-02-20"); // ? Déjà retourné
 	Loan.createLoan(book5, "Santiago Fisher", "2025-02-10", null); // ! Toujours emprunté
-	Loan.createLoan(book6, "Frodo Baggins", "2025-01-25", "2025-02-25"); // ? Retourné
-	Loan.createLoan(book7, "Meursault Reader", "2025-02-05", "2025-03-05"); // ? Retourné
-	Loan.createLoan(book8, "Edmond Dantes", "2025-01-30", null); // ! Toujours emprunté
-	Loan.createLoan(book9, "Corporate Reader", "2025-02-15", null); // ! Toujours emprunté
 }
