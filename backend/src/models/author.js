@@ -2,6 +2,11 @@ import db from "../db/connection.js";
 
 class Author {
 	static createAuthor(firstName, lastName, birth_year, nationality) {
+		const normalizedNationality = nationality.trim() || "Unknown";
+
+		if (normalizedNationality < 2 || normalizedNationality > 50)
+			throw new Error("La nationalité doit contenir entre 2 et 50 caractères");
+
 		const stmt = db.prepare(`
 			INSERT INTO authors (firstName, lastName, birth_year, nationality) VALUES (?, ?, ?, ?)
 		`);

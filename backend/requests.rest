@@ -8,6 +8,9 @@ GET http://localhost:3000/
 ### Récupère la liste des livres
 GET http://localhost:3000/api/books/
 
+### Récupère les livres disponibles
+GET http://localhost:3000/api/books/available/2
+
 ### Récupère tous les livres (endpoint alternatif)
 GET http://localhost:3000/api/books/all
 
@@ -122,3 +125,6 @@ DELETE http://localhost:3000/api/loans
 ###############################################
 ### Route de test SQL
 GET http://localhost:3000/all
+
+### Vérification de l'intégrité référentielle des auteurs
+GET http://localhost:3000/api/authors/verify

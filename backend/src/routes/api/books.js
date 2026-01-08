@@ -26,6 +26,25 @@ apibookRouter.get("/", (req, res) => {
 	}
 });
 
+// Récupérer les livres disponibles
+apibookRouter.get("/available/:id", (req, res) => {
+	try {
+		const id = req.params.id;
+		const books = customQuery(
+			`
+			SELECT available FROM books
+			WHERE available = 1 AND id = ${id}
+		`
+		);
+
+		console.table(books);
+		res.status(200).json(books);
+	} catch (error) {
+		console.error("Erreur lors de la récupération des livres :", error);
+		res.status(500).json({ message: "Impossible de récupérer les livres." });
+	}
+});
+
 // Créer un nouveau livre
 apibookRouter.post("/", (req, res) => {
 	try {

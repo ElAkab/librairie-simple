@@ -4,12 +4,10 @@ async function getAuthors() {
 	try {
 		const req = await fetch("/api/authors");
 
-		console.log(req);
 		if (!req.ok) throw new Error("Erreur avec l'API");
 
 		const result = await req.json();
 
-		console.log(result);
 		return result;
 	} catch (error) {
 		console.error("Erreur lors de la récupération des auteurs :", error);
@@ -31,6 +29,7 @@ async function init() {
 
 			const card = `
 				<div class="author-card">
+				<span id="badge-author-id">${element.id}</span>
 					<h2>${firstName} ${lastName}</h2>
 					<hr />
 					<div class="author-details">

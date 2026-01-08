@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Bibliothèque | Formulaire</title>
+		<link rel="stylesheet" href="../src/form.css" />
+	</head>
+	<body>
+		<header>
+			<div>
+				<input type="search" placeholder="Il te faut quoi encore..." />
+				<button>🔍</button>
+			</div>
+
+			<nav>
+				<a href="/">Accueil</a>
+				<a href="./loans.html">Emprunts</a>
+				<a href="./authors.html">Auteurs</a>
+			</nav>
+		</header>
+
+		<main class="main-container">
+			<h1>Formulaire d'ajout</h1>
+			<hr />
+			<section id="forms-field">
+				<!-- Ajouter un auteur -->
+				<form class="add add-author">
+					<h2>Ajouter un auteur</h2>
+					<hr />
+
+					<!-- Prénom et Nom -->
+					<div id="name-fields">
+						<input type="text" name="firstName" placeholder="Prénom ..." />
+						<input type="text" name="lastName" placeholder="Nom ..." />
+					</div>
+
+					<!-- Année de naissance et Nationalité -->
+					<div id="birth-nationality-fields">
+						<input
+							type="number"
+							min="1900"
+							max="2024"
+							name="birthYear"
+							placeholder="Année de naissance"
+						/>
+						<input
+							list="nationalities"
+							name="nationality"
+							placeholder="Nationalité..."
+							autocomplete="off"
+						/>
+						<datalist id="nationalities">
+							<option value="Française"></option>
+							<option value="Belge"></option>
+							<option value="Suisse"></option>
+							<option value="Canadienne"></option>
+							<option value="Américaine"></option>
+							<option value="Britannique"></option>
+							<option value="Allemande"></option>
+							<option value="Italienne"></option>
+							<option value="Espagnole"></option>
+							<option value="Portugaise"></option>
+							<option value="Néerlandaise"></option>
+							<option value="Japonaise"></option>
+							<option value="Chinoise">
+								<!-- L'utilisateur peut aussi taper autre chose -->
+							</option>
+						</datalist>
+					</div>
+					<button type="submit">Ajouter l'auteur</button>
+				</form>
+
+				<!-- Ajouter un livre -->
+				<form class="add add-book">
+					<h2>Ajouter un livre</h2>
+					<hr />
+
+					<input
+						type="text"
+						name="title"
+						placeholder="Titre de ton livre de merde"
+					/>
+					<input
+						type="number"
+						name="authorId"
+						min="1"
+						max="67"
+						placeholder="ID de l'auteur"
+					/>
+					<input
+						type="number"
+						min="1900"
+						max="2024"
+						name="publicationYear"
+						placeholder="Année de naissance"
+					/>
+					<button type="submit">Ajouter le livre</button>
+				</form>
+
+				<!-- Ajouter un emprunt -->
+				<form class="add add-loan">
+					<h2>Faire un emprunt</h2>
+					<hr />
+
+					<input
+						type="number"
+						name="bookId"
+						min="1"
+						max="67"
+						placeholder="ID du livre"
+					/>
+					<input
+						type="text"
+						name="borrowerName"
+						placeholder="Nom de l'emprunteur"
+					/>
+					<div>
+						<label for="from-date">Date d'emprunt</label>
+						<input type="date" id="from-date" name="fromDate" />
+						<label for="to-date">Date de retour</label>
+						<input type="date" id="to-date" name="toDate" />
+					</div>
+					<button type="submit">Ajouter l'emprunt</button>
+				</form>
+			</section>
+
+			<!-- Livres disponibles -->
+			<section id="available-books-field">
+				<h2>Livres disponibles</h2>
+				<hr />
+				<ul id="available-books-list">
+					Nothing here yet
+				</ul>
+			</section>
+		</main>
+	</body>
+
+	<script src="../src/form.js"></script>
+</html>

@@ -1,0 +1,20 @@
+Votre projet utilise CSR (Client-Side Rendering) - rendu côté client.
+
+   Voici pourquoi :
+
+     - Frontend = HTML statique avec JavaScript qui charge les données via fetch("/api/books") après le chargement de la page
+     - Backend = API Express qui sert uniquement des données JSON (pas de rendu HTML)
+     - Le contenu est injecté dynamiquement dans le DOM avec app.innerHTML après le chargement initial
+
+   Ce n'est PAS :
+
+     - ❌ SSR - pas de rendu HTML côté serveur (Express ne génère pas de HTML, juste du JSON)
+     - ❌ SSG - pas de pré-génération statique des pages (le HTML est vide au départ, rempli par JS)
+
+   L'architecture actuelle : HTML vide → JavaScript charge → API retourne JSON → JS injecte dans DOM.
+
+===============
+Note à moi-même
+===============
+
+SQL : Contrainte CHECK s'utilise pour valider les données dans une colonne. Par exemple, CHECK (age >= 18) garantit que l'âge est au moins 18 ans. (Phrase mémotechnique : CHECK "Vérifie bien que" condition)

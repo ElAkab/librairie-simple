@@ -8,7 +8,8 @@ const createAuthorsTable = `
         firstName TEXT,
         lastName TEXT,
         birth_year INTEGER,
-        nationality TEXT
+        nationality TEXT DEFAULT 'Unknown'
+        CHECK (LENGTH(nationality) >= 2 AND LENGTH(nationality) <= 50)
     )
 `;
 

@@ -201,6 +201,8 @@ async function getLoans() {
 async function init() {
 	try {
 		const allLoans = await getLoans();
+		console.log("Emprunts récupérés:", allLoans);
+
 		allLoans.forEach((loan) => {
 			const cardLoan = document.createElement("div");
 			cardLoan.classList.add("loan-card");

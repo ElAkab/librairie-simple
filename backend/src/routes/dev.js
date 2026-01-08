@@ -34,9 +34,9 @@ devRouter.get("/test", (_req, res) => {
 // Route pour voir toutes les tables
 devRouter.get("/all", (_req, res) => {
 	try {
-		const allAuthors = Author.findAll();
-		const allBooks = Book.findAll();
-		const allLoans = Loan.findAll();
+		const allAuthors = customQuery("SELECT * FROM authors");
+		const allBooks = customQuery("SELECT * FROM books");
+		const allLoans = customQuery("SELECT * FROM loans");
 
 		console.table(allAuthors);
 		console.table(allBooks);

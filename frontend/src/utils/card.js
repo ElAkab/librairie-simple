@@ -16,10 +16,11 @@ const randomImage = () => {
 	return images[Math.floor(Math.random() * images.length)];
 };
 
-export default function createCard(title, year, author, available = 1) {
+export default function createCard(title, year, author, available = 1, id) {
 	const imageUrl = randomImage();
 	return `
     <div class="card">
+		<span class="badge-book-id">${id}</span>
 		<span class="availability ${available ? "available" : "unavailable"}">
 			${available ? "Disponible" : "Indisponible"}
 		</span>
