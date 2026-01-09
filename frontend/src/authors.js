@@ -71,3 +71,7 @@ modal.addEventListener("submit", () => {
 });
 
 init();
+
+// todo 1 : ajouter la gestion des filtres dans le formulaire
+// todo 2 : ajouter le moyen de supprimer un auteur et tous ses livres associés
+// todo 3 : ajouter le moyen de modifier un auteur

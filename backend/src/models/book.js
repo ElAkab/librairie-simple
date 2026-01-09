@@ -27,7 +27,7 @@ class Book {
 	static updateBook(title, year, id) {
 		const stmt = db.prepare(`
 			UPDATE books
-			SET (title, year) = (?, ?)
+			SET title = ?, year = ?
 			WHERE id = ?
 		`);
 		const result = stmt.run(title, year, id);

@@ -19,7 +19,7 @@ const randomImage = () => {
 export default function createCard(title, year, author, available = 1, id) {
 	const imageUrl = randomImage();
 	return `
-    <div class="card">
+    <div class="card" data-id="${id}">
 		<span class="badge-book-id">${id}</span>
 		<span class="availability ${available ? "available" : "unavailable"}">
 			${available ? "Disponible" : "Indisponible"}

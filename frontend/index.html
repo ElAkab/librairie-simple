@@ -25,6 +25,25 @@
 			<span><i>Donc faudrait la fermer un moment..</i></span>
 			<section id="container"></section>
 
+			<dialog id="book-dialog">
+				<form>
+					<h2 id="dialog-title">Modification du livre</h2>
+					<label for="book-title">Titre :</label>
+					<input type="text" id="book-title" name="title" />
+
+					<label for="book-author">Auteur :</label>
+					<input type="text" id="book-author" name="author" />
+
+					<label for="book-year">Année de publication :</label>
+					<input type="number" id="book-year" name="year" />
+
+					<div class="dialog-buttons">
+						<button id="save-book" type="submit">Enregistrer</button>
+					</div>
+					<button id="close-dialog" type="button">X</button>
+				</form>
+			</dialog>
+
 			<div class="navigation-buttons">
 				<button id="gauche">Gauche</button>
 				<button id="droite">Droite</button>
