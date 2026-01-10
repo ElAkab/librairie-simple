@@ -1,4 +1,6 @@
 import createCard from "./utils/card.js";
+import API_URL from "./config.js";
+
 const app = document.getElementById("container");
 
 app.addEventListener("click", (event) => {
@@ -69,7 +71,7 @@ app.addEventListener("click", (event) => {
 });
 
 async function fetchBooks() {
-	const response = await fetch("/api/books");
+	const response = await fetch(`${API_URL}/api/books`);
 	const books = await response.json();
 	return books;
 }
@@ -82,7 +84,7 @@ async function init() {
 		allBooks.forEach((element) => {
 			const title = element.title;
 			const year = element.year;
-			const author = element.firstName + " " + element.lastName;
+			const author = element.full_name;
 			const available = element.available;
 			const id = element.id;
 
@@ -98,7 +100,7 @@ async function init() {
 
 async function updateBook(id, title, year) {
 	try {
-		const req = await fetch(`/api/books/${id}`, {
+		const req = await fetch(`${API_URL}/api/books/${id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ title, year }),
@@ -122,4 +124,5 @@ init();
 
 // todo 1 : ajouter le moyen de filtrer les livres par auteur ou disponibilité
 // todo 2 : ajouter le moyen de supprimer un livre
-// todo 3 : ajouter le moyen de modifier un livre après avoir cliqué dessus (html encore)
+// * 3 : ajouter le moyen de modifier un livre après avoir cliqué dessus (html encore)
+// todo 4 : ajouter le moyen de rechercher un livre

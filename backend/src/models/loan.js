@@ -1,73 +1,73 @@
-import db from "../db/connection.js";
+import pool from "../db/connection.js";
 import Book from "./book.js";
 
 class Loan {
-	// Création d'un emprunt
-	static createLoan(bookId, borrowedName, borrowedDate, returnDate) {
-		// Préparer la requête SQL pour une future insertion
-		const stmt = db.prepare(`
-            INSERT INTO loans (book_id, borrower_name, loan_status, borrowed_date, return_date)
-            VALUES (?, ?, 'active', ?, ?)
-        `);
-		const result = stmt.run(bookId, borrowedName, borrowedDate, returnDate);
-
-		// Marquer le livre comme non disponible
-		Book.updateAvailability(bookId, false);
-
-		return result.lastInsertRowid;
+	static async findAll() {
+		const result = await pool.query("SELECT * FROM loans");
+		return result.rows;
 	}
 
-	// Récupérer tous les emprunts
-	static findAll() {
-		return db.prepare(`SELECT * FROM loans LIMIT 6`).all(); // .all() pour plusieurs résultats
+	static async count() {
+		const result = await pool.query("SELECT COUNT(*) as count FROM loans");
+		return parseInt(result.rows[0].count);
 	}
 
-	// Trouver un emprunt par son ID
-	static findById(id) {
-		return db.prepare(`SELECT * FROM loans WHERE id = ?`).get(id);
+	static async findById(id) {
+		const result = await pool.query("SELECT * FROM loans WHERE id = $1", [id]);
+		return result.rows[0] ?? null;
 	}
 
-	// Mettre à jour un emprunt (modifier : borrower_name, borrowed_date, return_date) par son ID
-	static updateLoan(borrowerName, loan_status, returnDate, id) {
-		// Récupérer l'emprunt pour obtenir le book_id
-		const loan = this.findById(id);
-		if (!loan) throw new Error("Emprunt introuvable");
+	static async createLoan(book_id, borrower_name, borrowed_date, return_date) {
+		const result = await pool.query(
+			"INSERT INTO loans (book_id, borrower_name, borrowed_date, return_date, loan_status) VALUES ($1, $2, $3, $4, 'active') RETURNING *",
+			[book_id, borrower_name, borrowed_date, return_date]
+		);
+		
+		// Mettre à jour la disponibilité du livre
+		await Book.updateAvailability(book_id, false);
+		
+		return result.rows[0];
+	}
 
-		// Mettre à jour l'emprunt
-		const stmt = db.prepare(`
-            UPDATE loans
-			SET borrower_name = ?,
-				loan_status = ?,
-				return_date = ?
-			WHERE id = ?
-        `);
-		const result = stmt.run(borrowerName, loan_status, returnDate, id);
-
-		// Synchroniser la disponibilité du livre
-		if (loan_status === "returned") {
-			// Si l'emprunt est retourné, le livre redevient disponible
-			Book.updateAvailability(loan.book_id, true);
-		} else if (loan_status === "active" || loan_status === "overdue") {
-			// Si l'emprunt est actif ou en retard, le livre n'est pas disponible
-			Book.updateAvailability(loan.book_id, false);
+	static async updateLoan(borrower_name, loan_status, return_date, id) {
+		const result = await pool.query(
+			"UPDATE loans SET borrower_name = $1, loan_status = $2, return_date = $3 WHERE id = $4",
+			[borrower_name, loan_status, return_date, id]
+		);
+		
+		// Si le statut est 'returned', remettre le livre disponible
+		if (loan_status === 'returned') {
+			const loan = await this.findById(id);
+			if (loan) {
+				await Book.updateAvailability(loan.book_id, true);
+			}
 		}
-
-		return result.changes;
+		
+		return result.rowCount;
 	}
 
-	// Supprimer un emprunt par son ID
-	static deleteById(id) {
-		const loan = this.findById(id);
-
+	static async deleteById(id) {
+		// Récupérer le loan avant de le supprimer pour remettre le livre disponible
+		const loan = await this.findById(id);
+		
+		const result = await pool.query("DELETE FROM loans WHERE id = $1", [id]);
+		
+		// Remettre le livre disponible
 		if (loan) {
-			Book.updateAvailability(loan.book_id, true);
+			await Book.updateAvailability(loan.book_id, true);
 		}
-		return db.prepare(`DELETE FROM loans WHERE id = ?`).run(id);
+		
+		return result.rowCount;
 	}
 
-	static clear() {
-		return db.prepare(`DELETE FROM loans`).run();
+	static async clear() {
+		const result = await pool.query("DELETE FROM loans");
+		
+		// Remettre tous les livres disponibles
+		await pool.query("UPDATE books SET available = true");
+		
+		return result.rowCount;
 	}
 }
-// NOT NULL
+
 export default Loan;

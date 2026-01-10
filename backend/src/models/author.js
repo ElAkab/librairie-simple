@@ -1,43 +1,43 @@
-import db from "../db/connection.js";
+import pool from "../db/connection.js";
 
 class Author {
-	static createAuthor(firstName, lastName, birth_year, nationality) {
-		const normalizedNationality = nationality.trim() || "Unknown";
-
-		if (normalizedNationality < 2 || normalizedNationality > 50)
-			throw new Error("La nationalité doit contenir entre 2 et 50 caractères");
-
-		const stmt = db.prepare(`
-			INSERT INTO authors (firstName, lastName, birth_year, nationality) VALUES (?, ?, ?, ?)
-		`);
-		const result = stmt.run(firstName, lastName, birth_year, nationality);
-		return result.lastInsertRowid;
+	static async findAll() {
+		const result = await pool.query("SELECT * FROM authors");
+		return result.rows;
 	}
 
-	static findAll() {
-		return db.prepare(`SELECT * FROM authors LIMIT 6`).all();
+	static async count() {
+		const result = await pool.query("SELECT COUNT(*) as count FROM authors");
+		return parseInt(result.rows[0].count);
 	}
 
-	static findById(id) {
-		return db.prepare(`SELECT * FROM authors WHERE id = ?`).get(id);
+	static async findById(id) {
+		const result = await pool.query("SELECT * FROM authors WHERE id = $1", [
+			id,
+		]);
+		return result.rows[0] ?? null;
 	}
 
-	static updateAuthor(firstName, lastName, nationality, id) {
-		const stmt = db.prepare(`
-			UPDATE authors
-			SET firstName = ?, lastName = ?, nationality = ?
-			WHERE id = ?
-		`);
-		const result = stmt.run(firstName, lastName, nationality, id);
-		return result.changes; // Nombre de lignes modifiées
+	static async createAuthor(full_name, birth_year, nationality) {
+		const result = await pool.query(
+			"INSERT INTO authors (full_name, birth_year, nationality) VALUES ($1, $2, $3) RETURNING id",
+			[full_name, birth_year, nationality]
+		);
+		return result.rows[0].id;
 	}
 
-	static deleteById(id) {
-		return db.prepare(`DELETE FROM authors WHERE id = ?`).run(id);
+	static async updateAuthor(full_name, nationality, id) {
+		const result = await pool.query(
+			"UPDATE authors SET full_name = $1, nationality = $2 WHERE id = $3",
+			[full_name, nationality, id]
+		);
+		return result.rowCount;
+	}
+
+	static async deleteById(id) {
+		const result = await pool.query("DELETE FROM authors WHERE id = $1", [id]);
+		return result.rowCount;
 	}
 }
-
-// console.log(Autors.createAuthor("Itler", "Adolf", 1895, "German"));
-// console.log(Author.findAll());
 
 export default Author;

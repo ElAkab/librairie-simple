@@ -1,3 +1,5 @@
+import API_URL from "./config.js";
+
 const loansContainer = document.getElementById("loans");
 const applyFiltersButton = document.getElementById("apply-filters");
 
@@ -31,7 +33,7 @@ applyFiltersButton.addEventListener("click", async (e) => {
 
 	// todo : Récupérer les emprunts filtrés depuis l'API (fait à moitié => trouver un moyen d'adapter le backend ou carrément créer une nouvelle route)
 	try {
-		const req = await fetch(`/api/loans?${params.toString()}`);
+		const req = await fetch(`${API_URL}/api/loans?${params.toString()}`);
 		if (!req.ok) throw new Error("Erreur avec l'API");
 		const filteredLoans = await req.json();
 
@@ -89,7 +91,7 @@ loansContainer.addEventListener("click", async (e) => {
 		if (!confirm("Voulez-vous vraiment supprimer cet emprunt ?")) return;
 
 		try {
-			const req = await fetch(`/api/loans/${loanId}`, {
+			const req = await fetch(`${API_URL}/api/loans/${loanId}`, {
 				method: "DELETE",
 			});
 			if (!req.ok) throw new Error("Erreur lors de la suppression");
@@ -112,7 +114,7 @@ loansContainer.addEventListener("click", async (e) => {
 
 	// Récupérer les données de l'emprunt depuis l'API
 	try {
-		const req = await fetch(`/api/loans/${loanId}`);
+		const req = await fetch(`${API_URL}/api/loans/${loanId}`);
 		if (!req.ok) throw new Error("Erreur lors de la récupération de l'emprunt");
 		const loan = await req.json();
 
@@ -159,7 +161,7 @@ editLoanForm.addEventListener("submit", async (e) => {
 	};
 
 	try {
-		const req = await fetch(`/api/loans/${loanId}`, {
+		const req = await fetch(`${API_URL}/api/loans/${loanId}`, {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(formData),
@@ -185,7 +187,7 @@ editLoanForm.addEventListener("submit", async (e) => {
 // Récupérer tous les emprunts
 async function getLoans() {
 	try {
-		const req = await fetch("/api/loans");
+		const req = await fetch(`${API_URL}/api/loans`);
 		if (!req.ok) throw new Error("Erreur avec l'API");
 		const result = await req.json();
 		return result;

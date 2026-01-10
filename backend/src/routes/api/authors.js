@@ -4,9 +4,9 @@ import Author from "../../models/author.js";
 const authorsRouter = express.Router();
 
 // Récupération de tous les auteurs
-authorsRouter.get("/", (req, res) => {
+authorsRouter.get("/", async (req, res) => {
 	try {
-		const table = Author.findAll();
+		const table = await Author.findAll();
 
 		console.table(table);
 		res.status(200).json(table);
@@ -17,24 +17,19 @@ authorsRouter.get("/", (req, res) => {
 });
 
 // Création d'un nouvel auteur
-authorsRouter.post("/", (req, res) => {
+authorsRouter.post("/", async (req, res) => {
 	try {
-		const { firstName, lastName, birth_year, nationality } = req.body;
+		const { full_name, birth_year, nationality } = req.body;
 
-		if (!firstName || !lastName || !birth_year || !nationality)
+		if (!full_name || !birth_year || !nationality)
 			return res
 				.status(400)
 				.json({ message: "Champs obligatoires manquants :/" });
 
-		const id = Author.createAuthor(
-			firstName,
-			lastName,
-			birth_year,
-			nationality
-		);
+		const id = await Author.createAuthor(full_name, birth_year, nationality);
 
 		res.status(201).json({
-			message: `Congrate ${(firstName, lastName)}`,
+			message: `Congrate ${full_name}`,
 			id: id,
 		});
 	} catch (error) {
@@ -45,13 +40,17 @@ authorsRouter.post("/", (req, res) => {
 });
 
 // Récupération d'un auteur par son ID
-authorsRouter.get("/:id", (req, res) => {
+authorsRouter.get("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 
 		if (!id) return res.status(400).json({ message: "ID non fourni." });
 
-		const author = Author.findById(id);
+		const author = await Author.findById(id);
+
+		if (!author) {
+			return res.status(404).json({ message: "Auteur introuvable." });
+		}
 
 		res.status(200).json(author);
 	} catch (error) {
@@ -61,17 +60,17 @@ authorsRouter.get("/:id", (req, res) => {
 });
 
 // Mise à jour d'un auteur
-authorsRouter.put("/:id", (req, res) => {
+authorsRouter.put("/:id", async (req, res) => {
 	try {
-		const { firstName, lastName, nationality } = req.body;
+		const { full_name, nationality } = req.body;
 		const id = req.params.id;
 
-		if (!firstName || !lastName || !nationality)
+		if (!full_name || !nationality)
 			return res
 				.status(400)
 				.json({ message: "Champs obligatoires manquants :/" });
 
-		const changes = Author.updateAuthor(firstName, lastName, nationality, id);
+		const changes = await Author.updateAuthor(full_name, nationality, id);
 
 		res.status(200).json({
 			message: "Auteur mis à jour avec succès.",
@@ -84,7 +83,7 @@ authorsRouter.put("/:id", (req, res) => {
 });
 
 // Suppression d'un auteur
-authorsRouter.delete("/:id", (req, res) => {
+authorsRouter.delete("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 
@@ -93,7 +92,7 @@ authorsRouter.delete("/:id", (req, res) => {
 				message: "Aucune correspondance trouvé pour la suppression :/",
 			});
 
-		const change = Author.deleteById(id);
+		const change = await Author.deleteById(id);
 		res.status(200).json({
 			message: "Auteur supprimé avec succès.",
 			change: change,

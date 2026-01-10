@@ -1,6 +1,8 @@
-import Author from "../models/author.js";
-import Book from "../models/book.js";
-import db from "../db/connection.js";
+// import { Author, Book } from "../models/index.js";
+import db from "../db/sqlite/connection.js";
+
+// ⚠️ Ce fichier fonctionne UNIQUEMENT avec SQLite
+// Pour PostgreSQL, utilisez directement pool.query() dans vos routes
 
 // Requête personnalisée SQL
 export function customQuery(sql) {

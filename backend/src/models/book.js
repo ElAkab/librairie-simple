@@ -1,64 +1,54 @@
-import db from "../db/connection.js";
+import pool from "../db/connection.js";
 
 class Book {
-	// Création d'un livre
-	static createBook(title, authorId, year) {
-		// Préparer la requête SQL pour une future insertion
-		const stmt = db.prepare(`
-            INSERT INTO books (title, author_id, year) VALUES (?, ?, ?)
-        `);
-
-		// Exécuter la requête avec les valeurs fournies
-		const newBook = stmt.run(title, authorId, year);
-		return newBook.lastInsertRowid; // Retourner l'ID du nouveau livre car
+	static async findAll() {
+		const result = await pool.query("SELECT * FROM books");
+		return result.rows;
 	}
 
-	// Récupérer tous les livres
-	static findAll() {
-		return db.prepare(`SELECT * FROM books`).all();
-	}
-
-	// Trouver un livre par son ID
-	static findById(id) {
-		return db.prepare(`SELECT * FROM books WHERE id = ?`).get(id);
-	}
-
-	// Mettre à jour un livre par son ID
-	static updateBook(title, year, id) {
-		const stmt = db.prepare(`
-			UPDATE books
-			SET title = ?, year = ?
-			WHERE id = ?
+	static async findAllWithAuthors() {
+		const result = await pool.query(`
+			SELECT books.*, 
+				authors.full_name 
+			FROM books 
+			JOIN authors ON books.author_id = authors.id
 		`);
-		const result = stmt.run(title, year, id);
-		return result.changes;
+		return result.rows;
 	}
 
-	// Supprimer un livre par son ID
-	static deleteById(id) {
-		return db.prepare(`DELETE FROM books WHERE id = ?`).run(id);
+	static async count() {
+		const result = await pool.query("SELECT COUNT(*) as count FROM books");
+		return parseInt(result.rows[0].count);
 	}
 
-	// Compter le nombre de livres
-	static count() {
-		return db.prepare("SELECT COUNT(*) as total FROM books").get().total;
+	static async findById(id) {
+		const result = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
+		return result.rows[0] ?? null;
 	}
 
-	// Mettre à jour la disponibilité d'un livre
-	static updateAvailability(bookId, available) {
-		const stmt = db.prepare(`
-			UPDATE books
-			SET available = ?
-			WHERE id = ?
-		`);
-		const result = stmt.run(available ? 1 : 0, bookId);
-		return result.changes;
+	static async createBook(title, authorId, year) {
+		const result = await pool.query(
+			"INSERT INTO books (title, author_id, year) VALUES ($1, $2, $3) RETURNING id",
+			[title, authorId, year]
+		);
+		return result.rows[0].id;
+	}
+
+	static async updateBook(title, year, id) {
+		const result = await pool.query(
+			"UPDATE books SET title = $1, year = $2 WHERE id = $3",
+			[title, year, id]
+		);
+		return result.rowCount;
+	}
+
+	static async updateAvailability(bookId, available) {
+		const result = await pool.query(
+			"UPDATE books SET available = $1 WHERE id = $2",
+			[available, bookId]
+		);
+		return result.rowCount;
 	}
 }
 
 export default Book;
-
-// console.table(Book.findAll());
-// console.table(Book.count());
-// console.table(Book.findById(37));
-// console.table(Book.create("Harry Potter", "J.K. Rowling", 1997));

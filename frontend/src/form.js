@@ -1,4 +1,4 @@
-console.log("Ouais c Greg");
+import API_URL from "./config.js";
 
 const forms = document.querySelectorAll(".add");
 
@@ -18,15 +18,14 @@ forms.forEach((form) => {
 		if (form.classList.contains("add-author")) {
 			// * Vérification si un auteur similaire existe déjà
 			const isDuplicate = await checkDuplicateAuthor(
-				data.firstName,
-				data.lastName,
+				data.fullName,
 				data.birthYear
 			);
 
 			// ! Si l'auteur existe déjà, alerter et arrêter
 			if (isDuplicate) {
 				alert(
-					`Un auteur "${data.firstName} ${data.lastName}" (${data.birthYear}) existe déjà dans la base de données.`
+					`Un auteur "${data.fullName}" (${data.birthYear}) existe déjà dans la base de données.`
 				);
 				return;
 			}
@@ -39,10 +38,7 @@ forms.forEach((form) => {
 			}
 		} else if (form.classList.contains("add-book")) {
 			// * Vérification si le livre existe déjà pour cet auteur
-			const isDuplicate = await checkDuplicateBook(
-				data.title,
-				data.authorId
-			);
+			const isDuplicate = await checkDuplicateBook(data.title, data.authorId);
 
 			// ! Si le livre existe déjà, alerter et arrêter
 			if (isDuplicate) {
@@ -86,13 +82,12 @@ forms.forEach((form) => {
 async function createAuthor(obj) {
 	try {
 		const payload = {
-			firstName: obj.firstName,
-			lastName: obj.lastName,
+			full_name: obj.fullName,
 			birth_year: obj.birthYear,
 			nationality: obj.nationality,
 		};
 
-		const req = await fetch("/api/authors", {
+		const req = await fetch(`${API_URL}/api/authors`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(payload),
@@ -118,7 +113,7 @@ async function createBook(obj) {
 			year: obj.publicationYear,
 		};
 
-		const req = await fetch("/api/books", {
+		const req = await fetch(`${API_URL}/api/books`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(payload),
@@ -147,7 +142,7 @@ async function createLoan(obj) {
 			return_date: obj.toDate || null,
 		};
 
-		const req = await fetch("/api/loans", {
+		const req = await fetch(`${API_URL}/api/loans`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(payload),
@@ -167,9 +162,9 @@ async function createLoan(obj) {
 }
 
 // Vérifier si un auteur similaire existe déjà
-async function checkDuplicateAuthor(firstName, lastName, birthYear) {
+async function checkDuplicateAuthor(fullName, birthYear) {
 	try {
-		const req = await fetch("/api/authors", {
+		const req = await fetch(`${API_URL}/api/authors`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		});
@@ -178,11 +173,10 @@ async function checkDuplicateAuthor(firstName, lastName, birthYear) {
 
 		const authors = await req.json();
 
-		// Vérifier si un auteur avec le même nom/prénom/année existe
+		// Vérifier si un auteur avec le même nom complet/année existe
 		return authors.some(
 			(author) =>
-				author.firstName.toLowerCase() === firstName.toLowerCase() &&
-				author.lastName.toLowerCase() === lastName.toLowerCase() &&
+				author.full_name.toLowerCase() === fullName.toLowerCase() &&
 				author.birth_year == birthYear
 		);
 	} catch (error) {
@@ -194,7 +188,7 @@ async function checkDuplicateAuthor(firstName, lastName, birthYear) {
 // Vérifier si un livre existe déjà pour un auteur
 async function checkDuplicateBook(title, authorId) {
 	try {
-		const req = await fetch("/api/books", {
+		const req = await fetch(`${API_URL}/api/books`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		});
@@ -218,7 +212,7 @@ async function checkDuplicateBook(title, authorId) {
 // Récupérer les livres disponibles
 async function fetchAvailableBooks(bookId) {
 	try {
-		const req = await fetch(`/api/books/available/${bookId}`, {
+		const req = await fetch(`${API_URL}/api/books/available/${bookId}`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		});

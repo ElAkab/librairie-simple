@@ -1,22 +1,13 @@
 import express from "express";
 import Book from "../../models/book.js";
-import { deleteBookWithLoans, customQuery } from "../../commands/query.js";
+import pool from "../../db/connection.js";
 
 const apibookRouter = express.Router();
 
-// Récupérer tous les livres
-apibookRouter.get("/", (req, res) => {
+// Récupérer tous les livres avec informations des auteurs
+apibookRouter.get("/", async (req, res) => {
 	try {
-		const table = `
-	SELECT books.*,
-		authors.firstName,
-		authors.lastName
-		FROM books JOIN authors
-	ON books.author_id = authors.id
-	LIMIT 6
-	`;
-
-		const books = customQuery(table);
+		const books = await Book.findAllWithAuthors();
 
 		console.table(books);
 		res.status(200).json(books);
@@ -27,18 +18,16 @@ apibookRouter.get("/", (req, res) => {
 });
 
 // Récupérer les livres disponibles
-apibookRouter.get("/available/:id", (req, res) => {
+apibookRouter.get("/available/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
-		const books = customQuery(
-			`
-			SELECT available FROM books
-			WHERE available = 1 AND id = ${id}
-		`
+		const books = await pool.query(
+			`SELECT * FROM books WHERE available = true AND id = $1`,
+			[id]
 		);
 
-		console.table(books);
-		res.status(200).json(books);
+		console.table(books.rows);
+		res.status(200).json(books.rows);
 	} catch (error) {
 		console.error("Erreur lors de la récupération des livres :", error);
 		res.status(500).json({ message: "Impossible de récupérer les livres." });
@@ -46,16 +35,16 @@ apibookRouter.get("/available/:id", (req, res) => {
 });
 
 // Créer un nouveau livre
-apibookRouter.post("/", (req, res) => {
+apibookRouter.post("/", async (req, res) => {
 	try {
 		const { title, authorId, year } = req.body;
 
 		if (!title || !authorId || !year)
 			return res
 				.status(400)
-				.json({ message: "Champs obligatoires manquants :/" }); // ? Erreur 400 = Bad Request
+				.json({ message: "Champs obligatoires manquants :/" });
 
-		const id = Book.createBook(title, authorId, year);
+		const id = await Book.createBook(title, authorId, year);
 		res.status(201).json({ id, title, authorId, year });
 	} catch (error) {
 		console.error("Erreur lors de la création du livre :", error);
@@ -63,8 +52,8 @@ apibookRouter.post("/", (req, res) => {
 	}
 });
 
-// Mettre à jour un livr
-apibookRouter.put("/:id", (req, res) => {
+// Mettre à jour un livre
+apibookRouter.put("/:id", async (req, res) => {
 	try {
 		const { title, year } = req.body;
 		const id = req.params.id;
@@ -74,7 +63,7 @@ apibookRouter.put("/:id", (req, res) => {
 				.status(400)
 				.json({ message: "Champs obligatoires manquants :/" });
 
-		const updated = Book.updateBook(title, year, id);
+		const updated = await Book.updateBook(title, year, id);
 
 		res.status(200).json({
 			message: "Book updated successfully",
@@ -87,8 +76,8 @@ apibookRouter.put("/:id", (req, res) => {
 	}
 });
 
-// Supprimer un livre et ses emprunts associés
-apibookRouter.delete("/:id", (req, res) => {
+// Supprimer un livre (cascade delete des loans grâce au schéma)
+apibookRouter.delete("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 
@@ -97,10 +86,11 @@ apibookRouter.delete("/:id", (req, res) => {
 				message: "Aucune correspondance trouvé pour la suppression :/",
 			});
 
-		const action = deleteBookWithLoans(id);
+		const result = await pool.query("DELETE FROM books WHERE id = $1", [id]);
+		
 		res.status(200).json({
 			message: "Livre et ses emprunts supprimés avec succès.",
-			action: action,
+			changes: result.rowCount,
 		});
 	} catch (error) {
 		console.error("Erreur lors de la suppression du livre :", error);
@@ -108,10 +98,10 @@ apibookRouter.delete("/:id", (req, res) => {
 	}
 });
 
-// Récupérer tous les livres
-apibookRouter.get("/all", (req, res) => {
+// Récupérer tous les livres (endpoint alternatif)
+apibookRouter.get("/all", async (req, res) => {
 	try {
-		const books = Book.findAll();
+		const books = await Book.findAll();
 		res.status(200).json(books);
 	} catch (error) {
 		console.error("Erreur lors de la récupération des livres :", error);
@@ -120,10 +110,11 @@ apibookRouter.get("/all", (req, res) => {
 });
 
 // Récupérer un livre par son ID
-apibookRouter.get("/:id", (req, res) => {
+apibookRouter.get("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
-		const book = Book.findById(id);
+		const book = await Book.findById(id);
+		
 		if (!book) {
 			return res.status(404).json({ error: "Book not found" });
 		}

@@ -1,8 +1,10 @@
+import API_URL from "./config.js";
+
 const authorsField = document.getElementById("authors-field");
 
 async function getAuthors() {
 	try {
-		const req = await fetch("/api/authors");
+		const req = await fetch(`${API_URL}/api/authors`);
 
 		if (!req.ok) throw new Error("Erreur avec l'API");
 
@@ -22,15 +24,14 @@ async function init() {
 		console.log(allAuthors);
 
 		allAuthors.forEach((element) => {
-			const firstName = element.firstName;
-			const lastName = element.lastName;
+			const full_name = element.full_name;
 			const nationality = element.nationality;
 			const birth_year = element.birth_year;
 
 			const card = `
 				<div class="author-card">
 				<span id="badge-author-id">${element.id}</span>
-					<h2>${firstName} ${lastName}</h2>
+					<h2>${full_name}</h2>
 					<hr />
 					<div class="author-details">
 						<div><strong>Nationalité :</strong></div>

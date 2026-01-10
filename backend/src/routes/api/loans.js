@@ -4,11 +4,11 @@ import Loan from "../../models/loan.js";
 const loansRouter = express.Router();
 
 // Récupérer tous les emprunts
-loansRouter.get("/", (req, res) => {
+loansRouter.get("/", async (req, res) => {
 	try {
 		console.log(req.query);
 
-		const loans = Loan.findAll();
+		const loans = await Loan.findAll();
 		console.table(loans);
 		res.status(200).json(loans);
 	} catch (error) {
@@ -20,7 +20,7 @@ loansRouter.get("/", (req, res) => {
 });
 
 // Récupérer un emprunt par son ID
-loansRouter.get("/:id", (req, res) => {
+loansRouter.get("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 
@@ -29,7 +29,12 @@ loansRouter.get("/:id", (req, res) => {
 				.status(400)
 				.json({ message: "Aucune correspondance avec cet ID :/.." });
 
-		const loans = Loan.findById(id);
+		const loans = await Loan.findById(id);
+		
+		if (!loans) {
+			return res.status(404).json({ message: "Emprunt introuvable" });
+		}
+		
 		console.table(loans);
 		res.status(200).json(loans);
 	} catch (error) {
@@ -41,7 +46,7 @@ loansRouter.get("/:id", (req, res) => {
 });
 
 // Créer un nouvel emprunt
-loansRouter.post("/", (req, res) => {
+loansRouter.post("/", async (req, res) => {
 	try {
 		const { book_id, borrower_name, borrowed_date, return_date } = req.body;
 
@@ -50,7 +55,7 @@ loansRouter.post("/", (req, res) => {
 				.status(400)
 				.json({ message: "Données manquantes pour créer l'emprunt" });
 
-		const newLoan = Loan.createLoan(
+		const newLoan = await Loan.createLoan(
 			book_id,
 			borrower_name,
 			borrowed_date,
@@ -59,7 +64,7 @@ loansRouter.post("/", (req, res) => {
 		console.log(newLoan);
 		res.status(200).json({
 			message: "Emprunt créé avec succès",
-			changes: newLoan,
+			loan: newLoan,
 		});
 	} catch (error) {
 		console.error("Erreur lors de la création de l'emprunt", error);
@@ -70,7 +75,7 @@ loansRouter.post("/", (req, res) => {
 });
 
 // Mettre à jour un emprunt par son ID
-loansRouter.put("/:id", (req, res) => {
+loansRouter.put("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 		const { borrower_name, loan_status, return_date } = req.body;
@@ -80,7 +85,7 @@ loansRouter.put("/:id", (req, res) => {
 				.status(400)
 				.json({ message: "Aucune correspondance avec cet ID :/.." });
 
-		const updatedLoan = Loan.updateLoan(
+		const updatedLoan = await Loan.updateLoan(
 			borrower_name,
 			loan_status,
 			return_date,
@@ -100,7 +105,7 @@ loansRouter.put("/:id", (req, res) => {
 });
 
 // Mettre à jour partiellement un emprunt par son ID (PATCH)
-loansRouter.patch("/:id", (req, res) => {
+loansRouter.patch("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 		const { borrower_name, status, return_date } = req.body;
@@ -111,11 +116,11 @@ loansRouter.patch("/:id", (req, res) => {
 				.json({ message: "Aucune correspondance avec cet ID :/.." });
 
 		// Récupérer l'emprunt actuel pour garder les valeurs non modifiées
-		const currentLoan = Loan.findById(id);
+		const currentLoan = await Loan.findById(id);
 		if (!currentLoan)
 			return res.status(404).json({ message: "Emprunt introuvable" });
 
-		const updatedLoan = Loan.updateLoan(
+		const updatedLoan = await Loan.updateLoan(
 			borrower_name || currentLoan.borrower_name,
 			status || currentLoan.loan_status,
 			return_date !== undefined ? return_date : currentLoan.return_date,
@@ -129,16 +134,14 @@ loansRouter.patch("/:id", (req, res) => {
 		});
 	} catch (error) {
 		console.error("Erreur lors de la mise à jour de l'emprunt", error);
-		res
-			.status(500)
-			.json({
-				message: error.message || "Erreur lors de la mise à jour de l'emprunt",
-			});
+		res.status(500).json({
+			message: error.message || "Erreur lors de la mise à jour de l'emprunt",
+		});
 	}
 });
 
 // Supprimer un emprunt par son ID (optionnel)
-loansRouter.delete("/:id", (req, res) => {
+loansRouter.delete("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 
@@ -147,7 +150,7 @@ loansRouter.delete("/:id", (req, res) => {
 				.status(400)
 				.json({ message: "Aucune correspondance avec cet ID :/.." });
 
-		const changes = Loan.deleteById(id);
+		const changes = await Loan.deleteById(id);
 		res.status(200).json({
 			message: "Suppression effectuée avec succè !",
 			changes: changes,
@@ -161,9 +164,9 @@ loansRouter.delete("/:id", (req, res) => {
 });
 
 // Supprimer tous les emprunts
-loansRouter.delete("/", (req, res) => {
+loansRouter.delete("/", async (req, res) => {
 	try {
-		const changes = Loan.clear();
+		const changes = await Loan.clear();
 		res.status(200).json({
 			message: "Tous les emprunts ont été supprimés avec succès !",
 			changes: changes,

@@ -1,9 +1,9 @@
 // src/db/seeds/seed.js
 // Fichier de seed pour initialiser la base de données avec des données d'exemple
 
-import Author from "../../models/author.js";
-import Book from "../../models/book.js";
-import Loan from "../../models/loan.js";
+import Author from "../../models/sqlite/author.js";
+import Book from "../../models/sqlite/book.js";
+import Loan from "../../models/sqlite/loan.js";
 
 // Fonction pour peupler la base de données avec des données d'exemple
 export function seedDatabase() {
