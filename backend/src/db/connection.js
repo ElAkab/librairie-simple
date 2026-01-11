@@ -11,19 +11,22 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../../.env") });
 
 // Create a new pool instance using environment variables
-const pool = new Pool({
-	connectionString: process.env.DATABASE_URL,
-	host: process.env.PGHOST,
-	user: process.env.PGUSER,
-	password: process.env.PGPASSWORD,
-	database: process.env.PGDATABASE,
-	port: process.env.PGPORT,
-	// You can add more options like:
-	// max: 20, // maximum number of clients in the pool
-	// idleTimeoutMillis: 30000, // how long a client is allowed to remain idle
-	// connectionTimeoutMillis: 2000, // how long to wait for a connection
-	ssl: { rejectUnauthorized: false }
-});
+// Production (Railway) : utilise DATABASE_URL
+// Développement local : utilise variables individuelles (DB_HOST, DB_USER, etc.)
+const pool = new Pool(
+	process.env.DATABASE_URL
+		? {
+				connectionString: process.env.DATABASE_URL,
+				ssl: { rejectUnauthorized: false },
+		  }
+		: {
+				host: process.env.DB_HOST || 'localhost',
+				port: process.env.DB_PORT || 5432,
+				user: process.env.DB_USER,
+				password: process.env.DB_PASSWORD,
+				database: process.env.DB_DATABASE,
+		  }
+);
 
 // Listen for pool errors (important for production)
 pool.on("error", (err, client) => {
