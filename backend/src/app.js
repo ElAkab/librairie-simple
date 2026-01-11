@@ -32,6 +32,9 @@ const __dirname = path.dirname(__filename);
 // TODO: Adapter seedDatabase() pour PostgreSQL (méthodes async)
 // if (Book.count() === 0) seedDatabase();
 
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
