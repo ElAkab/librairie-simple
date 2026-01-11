@@ -19,20 +19,21 @@ const __dirname = path.dirname(__filename);
 // Initialiser la base de données avec seed si elle est vide
 async function initializeDatabase() {
 	try {
-		const result = await pool.query('SELECT COUNT(*) FROM books');
+		const result = await pool.query("SELECT COUNT(*) FROM books");
 		const count = parseInt(result.rows[0].count);
-		
+
 		if (count === 0) {
-			console.log('📚 Base de données vide, exécution du seed...');
+			console.log("📚 Base de données vide, exécution du seed...");
 			await seed();
 		} else {
 			console.log(`✅ Base de données déjà peuplée (${count} livres)`);
 		}
 	} catch (err) {
-		console.error('❌ Erreur lors de l\'initialisation de la DB:', err.message);
+		console.error("❌ Erreur lors de l'initialisation de la DB:", err.message);
 		// Si les tables n'existent pas encore, exécuter le seed
-		if (err.code === '42P01') { // Code PostgreSQL pour "table inexistante"
-			console.log('🔧 Tables inexistantes, création et seed...');
+		if (err.code === "42P01") {
+			// Code PostgreSQL pour "table inexistante"
+			console.log("🔧 Tables inexistantes, création et seed...");
 			await seed();
 		}
 	}
@@ -65,7 +66,7 @@ app.use("/api/loans", loansRouter);
 app.use(devRouter);
 
 // Servir les fichiers statiques du frontend
-app.use(express.static(path.join(__dirname, "../../frontend")));
+// app.use(express.static(path.join(__dirname, "../../frontend")));
 
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);
