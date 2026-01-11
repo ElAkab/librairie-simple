@@ -24,7 +24,7 @@ app.use(express.json());
 
 // Afficher les variables d'environnement pour le debug
 console.log("NODE_ENV =", process.env.NODE_ENV);
-console.log("FRONTEND_URL =", process.env.FRONTEND_URL);
+console.log("FRONTEND_URL =", process.env.FRONTEND_URL || "undefined");
 
 // Configurer CORS pour autoriser les requêtes depuis le frontend
 app.use(
