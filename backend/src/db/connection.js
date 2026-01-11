@@ -12,21 +12,14 @@ dotenv.config({ path: join(__dirname, "../../.env") });
 
 // Create a new pool instance using environment variables
 // Production (Railway) : utilise DATABASE_URL
-// Développement local : utilise variables individuelles (DB_HOST, DB_USER, etc.)
-const pool = new Pool(
-	process.env.DATABASE_URL
-		? {
-				connectionString: process.env.DATABASE_URL,
-				ssl: { rejectUnauthorized: false },
-		  }
-		: {
-				host: process.env.DB_HOST || 'localhost',
-				port: process.env.DB_PORT || 5432,
-				user: process.env.DB_USER,
-				password: process.env.DB_PASSWORD,
-				database: process.env.DB_DATABASE,
-		  }
-);
+// Développement local : construit la string depuis les variables .env
+const connectionString = process.env.DATABASE_URL || 
+	`postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:5432/${process.env.DB_DATABASE}`;
+
+const pool = new Pool({
+	connectionString,
+	ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+});
 
 // Listen for pool errors (important for production)
 pool.on("error", (err, client) => {
