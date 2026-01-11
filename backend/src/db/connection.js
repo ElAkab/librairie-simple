@@ -13,12 +13,25 @@ dotenv.config({ path: join(__dirname, "../../.env") });
 // Create a new pool instance using environment variables
 // Production (Railway) : utilise DATABASE_URL
 // Développement local : construit la string depuis les variables .env
-const connectionString = process.env.DATABASE_URL || 
+const connectionString =
+	process.env.DATABASE_URL ||
 	`postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:5432/${process.env.DB_DATABASE}`;
 
 const pool = new Pool({
-	connectionString,
-	ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+	connectionString: process.env.DATABASE_URL,
+	ssl:
+		process.env.NODE_ENV === "production"
+			? { rejectUnauthorized: false }
+			: false,
+	// host: process.env.DB_HOST,
+	// port: process.env.DB_PORT,
+	// user: process.env.DB_USER,
+	// password: process.env.DB_PASSWORD,
+	// database: process.env.DB_DATABASE,
+	// You can add more options like:
+	// max: 20, // maximum number of clients in the pool
+	// idleTimeoutMillis: 30000, // how long a client is allowed to remain idle
+	// connectionTimeoutMillis: 2000, // how long to wait for a connection
 });
 
 // Listen for pool errors (important for production)
@@ -73,14 +86,8 @@ async function seed() {
 		console.log("Seed terminé !");
 	} catch (err) {
 		console.error(err);
-	} finally {
-		await pool.end();
+		throw err;
 	}
 }
 
-// Exécuter le seed uniquement si ce fichier est exécuté directement
-if (import.meta.url === `file://${process.argv[1]}`) {
-	seed();
-}
-
-export default pool;
+export { pool as default, seed };
