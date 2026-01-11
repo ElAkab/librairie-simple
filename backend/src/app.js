@@ -8,7 +8,7 @@ import loansRouter from "./routes/api/loans.js";
 import devRouter from "./routes/dev.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config();
