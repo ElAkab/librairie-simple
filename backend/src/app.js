@@ -1,5 +1,5 @@
 // import Author from "./models/author.js";
-import Book from "./models/book.js";
+// import Book from "./models/book.js";
 // import { seedDatabase } from "./db/seeds/seed.js";
 import express from "express";
 import authorsRouter from "./routes/api/authors.js";
@@ -8,21 +8,21 @@ import loansRouter from "./routes/api/loans.js";
 import devRouter from "./routes/dev.js";
 import path from "path";
 import { fileURLToPath } from "url";
-// import dotenv from "dotenv";
+import dotenv from "dotenv";
 import cors from "cors";
 
-// dotenv.config();
+dotenv.config();
 
 const app = express();
 
 // Configurer CORS pour autoriser les requêtes depuis le frontend
 app.use(
 	cors({
-		origin:
-			process.env.NODE_ENV === "production"
-				? process.env.FRONTEND_URL
-				: "http://localhost:5173",
-		credentials: true, // Autoriser l'envoi des cookies si nécessaire
+		origin: [
+			"http://localhost:5173",
+			"https://pas-de-bruit-stp.netlify.app"
+		],
+		credentials: true,
 	})
 );
 
