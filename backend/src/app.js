@@ -29,7 +29,8 @@ async function initializeDatabase() {
 			console.log(`✅ Base de données déjà peuplée (${count} livres)`);
 		}
 	} catch (err) {
-		console.error("❌ Erreur lors de l'initialisation de la DB:", err.message);
+		console.error("❌ Erreur complète:", err);
+		console.error("Code erreur:", err.code);
 		// Si les tables n'existent pas encore, exécuter le seed
 		if (err.code === "42P01") {
 			// Code PostgreSQL pour "table inexistante"
@@ -38,6 +39,9 @@ async function initializeDatabase() {
 		}
 	}
 }
+
+console.log('🔍 DATABASE_URL présente:', !!process.env.DATABASE_URL);
+console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
 
 await initializeDatabase();
 
