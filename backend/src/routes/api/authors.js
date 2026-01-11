@@ -98,10 +98,7 @@ authorsRouter.delete("/:id", async (req, res) => {
 			change: change,
 		});
 	} catch (error) {
-		console.error(
-			"Erreur lors de la suppression de l'auteur putain... :",
-			error
-		);
+		console.error("Erreur lors de la suppression de l'auteur :", error);
 		res.status(500).json({ message: "Impossible de supprimer l'auteur.." });
 	}
 });
