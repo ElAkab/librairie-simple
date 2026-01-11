@@ -1,9 +1,10 @@
 {
-	"name": "sql",
+	"name": "backend",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "Backend : SQL Library simple App",
+	"main": "src/app.js",
 	"scripts": {
+		"start": "node src/app.js",
 		"dev": "node --watch src/app.js",
 		"query": "psql -U akab -d library_db -f src/commands/query.sql",
 		"seed": "node src/scripts/reset-db.js",
