@@ -70,7 +70,6 @@ Le serveur sert automatiquement le frontend depuis [backend/src/app.js:33](backe
 
 ## Points d'Attention
 
-<!-- - **SQL Injection** : Route `/available/:id` vulnerable - corriger en utilisant prepared statements -->
-
+- **SQL Injection** : Route `/available/:id` vulnerable - corriger en utilisant prepared statements
 - **Seeding automatique** : La DB se seed au démarrage si vide - désactiver cette ligne si nécessaire
 - **Disponibilité** : `Book.updateAvailability()` doit être appelée manuellement lors de modifications de loans

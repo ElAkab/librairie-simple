@@ -8,7 +8,9 @@
 		"dev": "node --watch src/app.js",
 		"query": "psql -U akab -d library_db -f src/commands/query.sql",
 		"seed": "node src/scripts/reset-db.js",
-		"reset": "node src/scripts/reset-db.js"
+		"reset": "node src/scripts/reset-db.js",
+		"lint": "eslint . --ext .js",
+		"validate": "node --check src/app.js && echo '✅ Syntaxe validée'"
 	},
 	"keywords": [],
 	"author": "",
@@ -18,7 +20,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"better-sqlite3": "^12.5.0",
 		"cors": "^2.8.5",
 		"dotenv": "^17.2.3",
 		"express": "^5.2.1",

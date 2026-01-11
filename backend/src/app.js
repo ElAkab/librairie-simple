@@ -61,6 +61,27 @@ app.use(
 
 const PORT = process.env.PORT || 3000;
 
+// Health check endpoint pour Railway et monitoring
+app.get("/health", async (req, res) => {
+	try {
+		// Vérifier la connexion à la base de données
+		await pool.query("SELECT 1");
+		res.status(200).json({
+			status: "healthy",
+			timestamp: new Date().toISOString(),
+			database: "connected",
+			environment: process.env.NODE_ENV || "development"
+		});
+	} catch (error) {
+		res.status(503).json({
+			status: "unhealthy",
+			timestamp: new Date().toISOString(),
+			database: "disconnected",
+			error: error.message
+		});
+	}
+});
+
 // Routes API
 app.use("/api/authors", authorsRouter);
 app.use("/api/books", apiBookRouter);
