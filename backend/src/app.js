@@ -13,18 +13,7 @@ import cors from "cors";
 
 // dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// TODO: Adapter seedDatabase() pour PostgreSQL (méthodes async)
-// if (Book.count() === 0) seedDatabase();
-
 const app = express();
-app.use(express.json());
-
-// Afficher les variables d'environnement pour le debug
-console.log("NODE_ENV =", process.env.NODE_ENV);
-console.log("FRONTEND_URL =", process.env.FRONTEND_URL || "undefined");
 
 // Configurer CORS pour autoriser les requêtes depuis le frontend
 app.use(
@@ -36,6 +25,14 @@ app.use(
 		credentials: true, // Autoriser l'envoi des cookies si nécessaire
 	})
 );
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// TODO: Adapter seedDatabase() pour PostgreSQL (méthodes async)
+// if (Book.count() === 0) seedDatabase();
+
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
@@ -51,11 +48,5 @@ app.use(devRouter);
 app.use(express.static(path.join(__dirname, "../../frontend")));
 
 app.listen(PORT, () => {
-	console.log(
-		`Server is running on http://${
-			process.env.NODE_ENV === "production"
-				? process.env.FRONTEND_URL
-				: "localhost"
-		}:${PORT}`
-	);
+	console.log(`Server is running on port ${PORT}`);
 });
