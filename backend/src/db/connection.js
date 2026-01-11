@@ -75,14 +75,8 @@ async function seed() {
 		console.log("Seed terminé !");
 	} catch (err) {
 		console.error(err);
-	} finally {
-		await pool.end();
+		throw err;
 	}
 }
 
-// Exécuter le seed uniquement si ce fichier est exécuté directement
-if (import.meta.url === `file://${process.argv[1]}`) {
-	seed();
-}
-
-export default pool;
+export { pool as default, seed };

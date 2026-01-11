@@ -1,6 +1,6 @@
 // import Author from "./models/author.js";
 import Book from "./models/book.js";
-// import { seedDatabase } from "./db/seeds/seed.js";
+import pool, { seed } from "./db/connection.js";
 import express from "express";
 import authorsRouter from "./routes/api/authors.js";
 import apiBookRouter from "./routes/api/books.js";
@@ -16,8 +16,29 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// TODO: Adapter seedDatabase() pour PostgreSQL (méthodes async)
-// if (Book.count() === 0) seedDatabase();
+// Initialiser la base de données avec seed si elle est vide
+async function initializeDatabase() {
+	try {
+		const result = await pool.query('SELECT COUNT(*) FROM books');
+		const count = parseInt(result.rows[0].count);
+		
+		if (count === 0) {
+			console.log('📚 Base de données vide, exécution du seed...');
+			await seed();
+		} else {
+			console.log(`✅ Base de données déjà peuplée (${count} livres)`);
+		}
+	} catch (err) {
+		console.error('❌ Erreur lors de l\'initialisation de la DB:', err.message);
+		// Si les tables n'existent pas encore, exécuter le seed
+		if (err.code === '42P01') { // Code PostgreSQL pour "table inexistante"
+			console.log('🔧 Tables inexistantes, création et seed...');
+			await seed();
+		}
+	}
+}
+
+await initializeDatabase();
 
 const app = express();
 app.use(express.json());
