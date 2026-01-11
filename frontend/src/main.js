@@ -122,7 +122,8 @@ async function updateBook(id, title, year) {
 
 init();
 
-// todo 1 : ajouter le moyen de filtrer les livres par auteur ou disponibilité
-// todo 2 : ajouter le moyen de supprimer un livre
+// todo : ajouter le moyen de filtrer les livres par auteur ou disponibilité
 // * 3 : ajouter le moyen de modifier un livre après avoir cliqué dessus (html encore)
-// todo 4 : ajouter le moyen de rechercher un livre
+// todo : ajouter le moyen de rechercher un livre
+
+// todo : ajouter le moyen de supprimer un livre
