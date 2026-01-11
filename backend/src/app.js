@@ -51,5 +51,11 @@ app.use(devRouter);
 app.use(express.static(path.join(__dirname, "../../frontend")));
 
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+	console.log(
+		`Server is running on http://${
+			process.env.NODE_ENV === "production"
+				? process.env.FRONTEND_URL
+				: "localhost"
+		}:${PORT}`
+	);
 });
