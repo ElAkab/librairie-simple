@@ -22,6 +22,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
+// Afficher les variables d'environnement pour le debug
+console.log("NODE_ENV =", process.env.NODE_ENV);
+console.log("FRONTEND_URL =", process.env.FRONTEND_URL);
+
 // Configurer CORS pour autoriser les requêtes depuis le frontend
 app.use(
 	cors({
