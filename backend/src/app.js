@@ -69,8 +69,11 @@ app.use("/api/loans", loansRouter);
 // Routes de développement/debug
 app.use(devRouter);
 
-// Servir les fichiers statiques du frontend
-// app.use(express.static(path.join(__dirname, "../../frontend")));
+// Servir les fichiers statiques du frontend uniquement en développement
+if (process.env.NODE_ENV !== 'production') {
+	app.use(express.static(path.join(__dirname, "../../frontend")));
+	console.log("📁 Serving frontend files from /frontend");
+}
 
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);

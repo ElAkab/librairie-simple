@@ -1,21 +1,48 @@
-import db from "../db/connection.js";
-// import { seedDatabase } from "../db/seeds/seed.js";
+import pool from "../db/connection.js";
 
-// Supprimer toutes les données
-db.exec("DELETE FROM books");
-db.exec("DELETE FROM authors");
-db.exec("DELETE FROM loans");
+async function resetDatabase() {
+	const client = await pool.connect();
+	
+	try {
+		// Supprimer toutes les données (CASCADE pour respecter les contraintes FK)
+		await client.query("DELETE FROM loans");
+		await client.query("DELETE FROM books");
+		await client.query("DELETE FROM authors");
 
-// Réinitialiser les compteurs auto-increment
-db.exec("DELETE FROM sqlite_sequence WHERE name='books'");
-db.exec("DELETE FROM sqlite_sequence WHERE name='authors'");
-db.exec("DELETE FROM sqlite_sequence WHERE name='loans'");
-console.log("🗑️  Database cleared");
-console.table({
-	books: db.prepare("SELECT * FROM books").all(),
-	authors: db.prepare("SELECT * FROM authors").all(),
-	loans: db.prepare("SELECT * FROM loans").all(),
-});
+		// Réinitialiser les séquences auto-increment (équivalent de sqlite_sequence)
+		await client.query("ALTER SEQUENCE books_id_seq RESTART WITH 1");
+		await client.query("ALTER SEQUENCE authors_id_seq RESTART WITH 1");
+		await client.query("ALTER SEQUENCE loans_id_seq RESTART WITH 1");
 
-// Repeupler
-// seedDatabase();
+		console.log("🗑️  Database cleared");
+
+		// Afficher les tables vides
+		const books = await client.query("SELECT * FROM books");
+		const authors = await client.query("SELECT * FROM authors");
+		const loans = await client.query("SELECT * FROM loans");
+
+		console.table({
+			books: books.rows,
+			authors: authors.rows,
+			loans: loans.rows,
+		});
+
+		// Repeupler
+		// await seedDatabase();
+	} catch (error) {
+		console.error("❌ Error resetting database:", error);
+		throw error;
+	} finally {
+		client.release();
+	}
+}
+
+resetDatabase()
+	.then(() => {
+		console.log("✅ Reset complete");
+		process.exit(0);
+	})
+	.catch((error) => {
+		console.error("❌ Reset failed:", error);
+		process.exit(1);
+	});

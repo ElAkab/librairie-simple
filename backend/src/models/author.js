@@ -2,7 +2,7 @@ import pool from "../db/connection.js";
 
 class Author {
 	static async findAll() {
-		const result = await pool.query("SELECT * FROM authors");
+		const result = await pool.query("SELECT * FROM authors LIMIT 6");
 		return result.rows;
 	}
 

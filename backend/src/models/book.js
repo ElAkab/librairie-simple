@@ -3,6 +3,7 @@ import pool from "../db/connection.js";
 class Book {
 	static async findAll() {
 		const result = await pool.query("SELECT * FROM books");
+		console.log(`📊 Books found: ${result.rows.length}`); // Debug
 		return result.rows;
 	}
 
@@ -12,6 +13,7 @@ class Book {
 				authors.full_name 
 			FROM books 
 			JOIN authors ON books.author_id = authors.id
+			LIMIT 6
 		`);
 		return result.rows;
 	}
