@@ -1,27 +1,37 @@
 {
-	"name": "backend",
-	"version": "1.0.0",
-	"description": "Backend : SQL Library simple App",
+	"name": "sql-library-backend",
+	"version": "0.1.0",
+	"description": "Simple SQL-based library backend built with Node.js and Express",
 	"main": "src/app.js",
+	"type": "module",
 	"scripts": {
 		"start": "node src/app.js",
 		"dev": "node --watch src/app.js",
-		"query": "psql -U akab -d library_db -f src/commands/query.sql",
-		"seed": "node src/scripts/reset-db.js",
-		"reset": "node src/scripts/reset-db.js"
+		"db:reset": "node src/scripts/reset-db.js",
+		"lint": "node --check src/**/*.js",
+		"validate-db": "node src/scripts/validate-schema.js"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"keywords": [
+		"node",
+		"express",
+		"backend",
+		"sql",
+		"postgresql",
+		"api"
+	],
+	"author": "Akab",
+	"license": "MIT",
 	"engines": {
-		"node": "20.19.5"
+		"node": "^20"
 	},
-	"type": "module",
 	"dependencies": {
-		"better-sqlite3": "^12.5.0",
 		"cors": "^2.8.5",
 		"dotenv": "^17.2.3",
 		"express": "^5.2.1",
 		"pg": "^8.16.3"
+	},
+	"devDependencies": {
+		"eslint": "^9.0.0",
+		"prettier": "^3.0.0"
 	}
 }
