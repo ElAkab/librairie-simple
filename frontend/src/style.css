@@ -272,3 +272,16 @@ hr {
 	cursor: pointer;
 	transition: background-color 0.3s;
 }
+
+#book-dialog form p,
+#book-dialog form p,
+span {
+	margin: 0;
+	display: flex;
+	justify-content: start;
+	gap: 5px;
+}
+
+#book-dialog form p span {
+	font-weight: bold;
+}

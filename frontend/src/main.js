@@ -35,7 +35,7 @@ app.addEventListener("click", (event) => {
 
 		// Pré-remplir les champs du formulaire dans le dialog avec les données du livre
 		document.getElementById("book-title").value = payload.title;
-		document.getElementById("book-author").value = payload.author;
+		document.getElementById("book-author").textContent = payload.author;
 		document.getElementById("book-year").value = payload.year;
 
 		// Gérer la sauvegarde des modifications
@@ -50,6 +50,7 @@ app.addEventListener("click", (event) => {
 				const sendBook = await updateBook(
 					payload.id,
 					updatedTitle,
+					updatedAuthor,
 					updatedYear
 				);
 				console.log("Livre mis à jour :", sendBook);
@@ -98,12 +99,12 @@ async function init() {
 	}
 }
 
-async function updateBook(id, title, year) {
+async function updateBook(id, title, author, year) {
 	try {
 		const req = await fetch(`${API_URL}/api/books/${id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ title, year }),
+			body: JSON.stringify({ title, author, year }),
 		});
 
 		if (!req.ok) {

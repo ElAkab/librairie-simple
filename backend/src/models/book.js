@@ -13,7 +13,7 @@ class Book {
 				authors.full_name 
 			FROM books 
 			JOIN authors ON books.author_id = authors.id
-			LIMIT 6
+			
 		`);
 		return result.rows;
 	}
@@ -41,6 +41,7 @@ class Book {
 			"UPDATE books SET title = $1, year = $2 WHERE id = $3",
 			[title, year, id]
 		);
+
 		return result.rowCount;
 	}
 

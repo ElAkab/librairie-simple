@@ -1,4 +1,5 @@
 import express from "express";
+import Author from "../../models/author.js";
 import Book from "../../models/book.js";
 import pool from "../../db/connection.js";
 
@@ -63,11 +64,11 @@ apibookRouter.put("/:id", async (req, res) => {
 				.status(400)
 				.json({ message: "Champs obligatoires manquants :/" });
 
-		const updated = await Book.updateBook(title, year, id);
+		const updatedBook = await Book.updateBook(title, year, id);
 
 		res.status(200).json({
 			message: "Book updated successfully",
-			changes: `Nombre de lignes modifiées: ${updated}`,
+			changes: `Nombre de lignes modifiées: ${updatedBook}`,
 		});
 	} catch (error) {
 		console.error("Erreur lors de la mise à jour du livre :", error);
@@ -87,7 +88,7 @@ apibookRouter.delete("/:id", async (req, res) => {
 			});
 
 		const result = await pool.query("DELETE FROM books WHERE id = $1", [id]);
-		
+
 		res.status(200).json({
 			message: "Livre et ses emprunts supprimés avec succès.",
 			changes: result.rowCount,
@@ -114,7 +115,7 @@ apibookRouter.get("/:id", async (req, res) => {
 	try {
 		const id = req.params.id;
 		const book = await Book.findById(id);
-		
+
 		if (!book) {
 			return res.status(404).json({ error: "Book not found" });
 		}
