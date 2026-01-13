@@ -6,10 +6,23 @@ const authorsRouter = express.Router();
 // Récupération de tous les auteurs
 authorsRouter.get("/", async (req, res) => {
 	try {
-		const table = await Author.findAll();
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 6;
+		const offset = (page - 1) * limit;
+
+		const table = await Author.findAll(limit, offset);
+		const total = await Author.count();
 
 		console.table(table);
-		res.status(200).json(table);
+		res.status(200).json({
+			data: table,
+			pagination: {
+				page,
+				limit,
+				total,
+				totalPages: Math.ceil(total / limit),
+			},
+		});
 	} catch (error) {
 		console.error("Erreur lors de la récupération des auteurs :", error);
 		res.status(500).json({ message: "Impossible de récupérer les auteurs." });

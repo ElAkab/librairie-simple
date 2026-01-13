@@ -40,8 +40,8 @@ async function initializeDatabase() {
 	}
 }
 
-console.log('🔍 DATABASE_URL présente:', !!process.env.DATABASE_URL);
-console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+console.log("🔍 DATABASE_URL présente:", !!process.env.DATABASE_URL);
+console.log("🔍 NODE_ENV:", process.env.NODE_ENV);
 
 await initializeDatabase();
 
@@ -59,7 +59,7 @@ app.use(
 	})
 );
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 // Routes API
 app.use("/api/authors", authorsRouter);
@@ -70,7 +70,7 @@ app.use("/api/loans", loansRouter);
 app.use(devRouter);
 
 // Servir les fichiers statiques du frontend uniquement en développement
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
 	app.use(express.static(path.join(__dirname, "../../frontend")));
 	console.log("📁 Serving frontend files from /frontend");
 }

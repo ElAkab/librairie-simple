@@ -3,7 +3,11 @@ import Book from "./book.js";
 
 class Loan {
 	static async findAll() {
-		const result = await pool.query("SELECT * FROM loans");
+		const result = await pool.query(`
+			SELECT * FROM loans
+			LIMIT 6
+			OFFSET 0
+		`);
 		return result.rows;
 	}
 

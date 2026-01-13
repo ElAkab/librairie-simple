@@ -7,14 +7,18 @@ class Book {
 		return result.rows;
 	}
 
-	static async findAllWithAuthors() {
-		const result = await pool.query(`
+	static async findAllWithAuthors(limit = 6, offset = 0) {
+		const result = await pool.query(
+			`
 			SELECT books.*, 
 				authors.full_name 
 			FROM books 
 			JOIN authors ON books.author_id = authors.id
-			
-		`);
+			LIMIT $1
+			OFFSET $2
+		`,
+			[limit, offset]
+		);
 		return result.rows;
 	}
 

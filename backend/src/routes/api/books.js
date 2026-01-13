@@ -6,12 +6,28 @@ import pool from "../../db/connection.js";
 const apibookRouter = express.Router();
 
 // Récupérer tous les livres avec informations des auteurs
+// curl http://localhost:4000/api/books?page=1&limit=6
 apibookRouter.get("/", async (req, res) => {
 	try {
-		const books = await Book.findAllWithAuthors();
+		console.log("Query params:", req.query); // Debug
+
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 6;
+		const offset = (page - 1) * limit;
+
+		const books = await Book.findAllWithAuthors(limit, offset);
+		const total = await Book.count();
 
 		console.table(books);
-		res.status(200).json(books);
+		res.status(200).json({
+			data: books,
+			pagination: {
+				page,
+				limit,
+				total,
+				totalPages: Math.ceil(total / limit), // Total des pages (arrondi supérieur et division par limit)
+			},
+		});
 	} catch (error) {
 		console.error("Erreur lors de la récupération des livres :", error);
 		res.status(500).json({ message: "Impossible de récupérer les livres." });

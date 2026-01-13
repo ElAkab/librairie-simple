@@ -1,102 +1,85 @@
 import createCard from "./utils/card.js";
 import API_URL from "./config.js";
+import Pagination from "./utils/pagination.js";
 
 const app = document.getElementById("container");
 
-app.addEventListener("click", (event) => {
-	const card = event.target.closest(".card");
-	if (card) {
-		const bookId = card.dataset.id; // Récupérer l'ID du livre
-		const bookTitle = card.querySelector(".book-title").textContent;
-		const bookAuthor = card.querySelector(".author").textContent;
-		const bookYear = card.querySelector(".year").textContent;
+// ==============================
+// Gestion du Dialog de modification
+// ==============================
+function attachEditListeners() {
+	const cards = document.querySelectorAll(".card");
 
-		const payload = {
-			id: bookId,
-			title: bookTitle,
-			author: bookAuthor,
-			year: bookYear,
-		};
+	cards.forEach((card) => {
+		card.addEventListener("click", (event) => {
+			const bookId = card.dataset.id;
+			const bookTitle = card.querySelector(".book-title").textContent;
+			const bookAuthor = card.querySelector(".author").textContent;
+			const bookYear = card.querySelector(".year").textContent;
 
-		console.log(payload);
+			const payload = {
+				id: bookId,
+				title: bookTitle,
+				author: bookAuthor,
+				year: bookYear,
+			};
 
-		// Activer le <dialog> de modification ici
-		const dialog = document.getElementById("book-dialog");
-		const closeButton = document.getElementById("close-dialog");
-		const saveButton = document.getElementById("save-book");
+			console.log(payload);
 
-		// Ouvrir le dialog
-		dialog.showModal();
+			const dialog = document.getElementById("book-dialog");
+			const closeButton = document.getElementById("close-dialog");
+			const saveButton = document.getElementById("save-book");
 
-		// Fermeture si le bouton de fermeture est cliqué
-		closeButton.onclick = () => {
-			dialog.close();
-		};
+			dialog.showModal();
 
-		// Pré-remplir les champs du formulaire dans le dialog avec les données du livre
-		document.getElementById("book-title").value = payload.title;
-		document.getElementById("book-author").textContent = payload.author;
-		document.getElementById("book-year").value = payload.year;
+			closeButton.onclick = () => {
+				dialog.close();
+			};
 
-		// Gérer la sauvegarde des modifications
-		saveButton.onclick = async (e) => {
-			e.preventDefault();
+			document.getElementById("book-title").value = payload.title;
+			document.getElementById("book-author").textContent = payload.author;
+			document.getElementById("book-year").value = payload.year;
 
-			const updatedTitle = document.getElementById("book-title").value;
-			const updatedAuthor = document.getElementById("book-author").value;
-			const updatedYear = document.getElementById("book-year").value;
+			saveButton.onclick = async (e) => {
+				e.preventDefault();
 
-			try {
-				const sendBook = await updateBook(
-					payload.id,
-					updatedTitle,
-					updatedAuthor,
-					updatedYear
-				);
-				console.log("Livre mis à jour :", sendBook);
-				// Mettre à jour l'affichage de la carte avec les nouvelles données
-				card.querySelector(".book-title").textContent = updatedTitle;
-				card.querySelector(".author").textContent = updatedAuthor;
-				card.querySelector(".year").textContent = updatedYear;
+				const updatedTitle = document.getElementById("book-title").value;
+				const updatedAuthor = document.getElementById("book-author").value;
+				const updatedYear = document.getElementById("book-year").value;
 
-				// Optionnel : afficher un message de succès à l'utilisateur
-				alert("Livre mis à jour avec succès !");
-			} catch (error) {
-				console.error("Erreur lors de la mise à jour du livre :", error);
-			}
+				try {
+					const sendBook = await updateBook(
+						payload.id,
+						updatedTitle,
+						updatedAuthor,
+						updatedYear
+					);
+					console.log("Livre mis à jour :", sendBook);
 
-			// Fermer le dialog après la sauvegarde
-			dialog.close();
-		};
-	}
-});
+					// Rafraîchir l'affichage avec la pagination actuelle
+					const currentPage =
+						parseInt(new URLSearchParams(window.location.search).get("page")) ||
+						1;
+					const booksData = await fetchBooks(currentPage);
+					renderBooks(booksData.data);
 
-async function fetchBooks() {
-	const response = await fetch(`${API_URL}/api/books`);
-	const books = await response.json();
-	return books;
+					alert("Livre mis à jour avec succès !");
+				} catch (error) {
+					console.error("Erreur lors de la mise à jour du livre :", error);
+				}
+
+				dialog.close();
+			};
+		});
+	});
 }
 
-async function init() {
-	try {
-		const allBooks = await fetchBooks();
-		console.log(allBooks);
-
-		allBooks.forEach((element) => {
-			const title = element.title;
-			const year = element.year;
-			const author = element.full_name;
-			const available = element.available;
-			const id = element.id;
-
-			const cardHTML = createCard(title, year, author, available, id);
-			app.innerHTML += cardHTML;
-		});
-	} catch (error) {
-		console.error("Erreur lors de la récupération des livres :", error);
-
-		app.innerHTML = "<p>Erreur lors du chargement des livres.</p>";
-	}
+// ==============================
+// Fonctions API
+// ==============================
+async function fetchBooks(page = 1) {
+	const response = await fetch(`${API_URL}/api/books?page=${page}&limit=6`);
+	return await response.json();
 }
 
 async function updateBook(id, title, author, year) {
@@ -121,10 +104,32 @@ async function updateBook(id, title, author, year) {
 	}
 }
 
-init();
+// ==============================
+// Render des livres
+// ==============================
+function renderBooks(books) {
+	app.innerHTML = "";
+
+	books.forEach((element) => {
+		const title = element.title;
+		const year = element.year;
+		const author = element.full_name;
+		const available = element.available;
+		const id = element.id;
+
+		const cardHTML = createCard(title, year, author, available, id);
+		app.innerHTML += cardHTML;
+	});
+
+	// Ré-attacher les event listeners après le render
+	attachEditListeners();
+}
+
+// ==============================
+// Initialisation
+// ==============================
+new Pagination(fetchBooks, renderBooks);
 
 // todo : ajouter le moyen de filtrer les livres par auteur ou disponibilité
-// * 3 : ajouter le moyen de modifier un livre après avoir cliqué dessus (html encore)
 // todo : ajouter le moyen de rechercher un livre
-
 // todo : ajouter le moyen de supprimer un livre

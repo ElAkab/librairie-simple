@@ -8,9 +8,23 @@ loansRouter.get("/", async (req, res) => {
 	try {
 		console.log(req.query);
 
-		const loans = await Loan.findAll();
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 6;
+		const offset = (page - 1) * limit;
+
+		const loans = await Loan.findAll(limit, offset);
+		const total = await Loan.count();
+
 		console.table(loans);
-		res.status(200).json(loans);
+		res.status(200).json({
+			data: loans,
+			pagination: {
+				page,
+				limit,
+				total,
+				totalPages: Math.ceil(total / limit),
+			},
+		});
 	} catch (error) {
 		console.error("Erreur lors de la récupération des emprunts :", error);
 		res
@@ -30,11 +44,11 @@ loansRouter.get("/:id", async (req, res) => {
 				.json({ message: "Aucune correspondance avec cet ID :/.." });
 
 		const loans = await Loan.findById(id);
-		
+
 		if (!loans) {
 			return res.status(404).json({ message: "Emprunt introuvable" });
 		}
-		
+
 		console.table(loans);
 		res.status(200).json(loans);
 	} catch (error) {

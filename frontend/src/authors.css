@@ -278,6 +278,12 @@ hr {
 	cursor: pointer;
 }
 
+.navigation-buttons button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	background-color: #ccc;
+}
+
 /* Pour les petits écrans, les boutons de navigation prennent toute la largeur */
 @media (max-width: 600px) {
 	.card {

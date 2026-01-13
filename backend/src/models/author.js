@@ -1,8 +1,15 @@
 import pool from "../db/connection.js";
 
 class Author {
-	static async findAll() {
-		const result = await pool.query("SELECT * FROM authors LIMIT 6");
+	static async findAll(limit = 6, offset = 0) {
+		const result = await pool.query(
+			`
+			SELECT * FROM authors
+			LIMIT $1
+			OFFSET $2
+		`,
+			[limit, offset]
+		);
 		return result.rows;
 	}
 
