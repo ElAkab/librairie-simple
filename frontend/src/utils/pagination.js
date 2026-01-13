@@ -25,11 +25,31 @@ class Pagination {
 	async loadPage(page) {
 		try {
 			const response = await this.fetchFunction(page);
-			this.currentPage = response.pagination.page; // Mettre à jour la page actuelle
-			this.totalPages = response.pagination.totalPages; // Mettre à jour le total des pages
+			
+			// Gérer les deux formats de réponse (ancien: array, nouveau: {data, pagination})
+			let data, pagination;
+			
+			if (Array.isArray(response)) {
+				// Format ancien (backend non mis à jour)
+				console.warn("⚠️ API retourne l'ancien format (array). Mise à jour backend recommandée.");
+				data = response;
+				pagination = {
+					page: this.currentPage,
+					totalPages: 1, // Impossible de paginer sans ces infos
+					total: response.length,
+					limit: response.length
+				};
+			} else {
+				// Format nouveau (avec pagination)
+				data = response.data;
+				pagination = response.pagination;
+			}
+			
+			this.currentPage = pagination.page;
+			this.totalPages = pagination.totalPages;
 
-			this.renderFunction(response.data); // Rendre les données reçues
-			this.updateButtons(); // Mettre à jour l'état des boutons
+			this.renderFunction(data);
+			this.updateButtons();
 		} catch (error) {
 			console.error("Erreur lors du chargement de la page :", error);
 		}
