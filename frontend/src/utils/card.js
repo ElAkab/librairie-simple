@@ -24,7 +24,7 @@ export default function createCard(title, year, author, available = 1, id) {
 		<span class="availability ${available ? "available" : "unavailable"}">
 			${available ? "Disponible" : "Indisponible"}
 		</span>
-        <img src="${imageUrl}" width="150" height="200" alt="Book cover" />
+        <img src="${imageUrl}" width="170" height="200" alt="Book cover" />
         <h3 class="book-title">${title}</h3>
 		<hr />
 
