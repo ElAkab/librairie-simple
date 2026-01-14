@@ -22,12 +22,13 @@ const entryPoints = {
 	"bundle-form": "./src/form.js",
 };
 
+// Bundler avec esbuild : Chacun dans un fichier minifié séparé
 for (const [name, entry] of Object.entries(entryPoints)) {
 	await esbuild.build({
 		entryPoints: [entry],
 		bundle: true,
 		minify: true,
-		outfile: `${distDir}/${name}.min.js`,
+		outfile: `${distDir}/src/${name}.min.js`,
 	});
 }
 
@@ -56,28 +57,31 @@ async function updateHtmlScript(htmlPath, outputPath, scriptName) {
 await updateHtmlScript(
 	"./index.html",
 	`${distDir}/index.html`,
-	"bundle-main.min.js"
+	"./src/bundle-main.min.js"
 );
 await updateHtmlScript(
 	"./pages/authors.html",
 	`${pagesDistDir}/authors.html`,
-	"../bundle-authors.min.js"
+	"../src/bundle-authors.min.js"
 );
 await updateHtmlScript(
 	"./pages/loans.html",
 	`${pagesDistDir}/loans.html`,
-	"../bundle-loans.min.js"
+	"../src/bundle-loans.min.js"
 );
 await updateHtmlScript(
 	"./pages/form.html",
 	`${pagesDistDir}/form.html`,
-	"../bundle-form.min.js"
+	"../src/bundle-form.min.js"
 );
 
 // 4. Minifier et copier les fichiers CSS depuis src/
 const cssFiles = ["style.css", "authors.css", "loans.css", "form.css"];
+
 const srcDistDir = `${distDir}/src`;
-fs.mkdirSync(srcDistDir);
+if (!fs.existsSync(srcDistDir)) {
+	fs.mkdirSync(srcDistDir);
+}
 
 const cleanCSS = new CleanCSS({ level: 2 });
 
