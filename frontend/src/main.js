@@ -59,7 +59,7 @@ function attachEditListeners() {
 					// Rafraîchir l'affichage avec la pagination actuelle
 					const currentPage =
 						parseInt(new URLSearchParams(window.location.search).get("page")) ||
-						1;
+						1; // Détails : parseInt pour convertir en nombre - URLSearchParams pour lire les paramètres d'URL - window.location.search pour obtenir la chaîne de requête complète et get("page") pour obtenir la valeur du paramètre "page".
 					const booksData = await fetchBooks(currentPage);
 					renderBooks(booksData.data);
 
