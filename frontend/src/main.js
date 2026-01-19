@@ -3,6 +3,42 @@ import API_URL from "./config.js";
 import Pagination from "./utils/pagination.js";
 
 const app = document.getElementById("container");
+const searchInput = document.querySelector("input[type='search']");
+const searchButton = document.querySelector(".search-bar button");
+const resetSearch = document.querySelector(".reset-search");
+
+searchButton.addEventListener("click", () => getSearchResults());
+
+async function getSearchResults() {
+	try {
+		if (resetSearch) resetSearch.style.display = "flex";
+
+		const query = searchInput.value.trim();
+		searchInput.value = "";
+
+		const response = await fetchBooks(1, query);
+		renderBooks(response.data);
+	} catch (error) {
+		console.error("Erreur lors de la recherche :", error);
+		alert("Erreur lors de la recherche des livres");
+	}
+}
+
+// Réinitialiser la recherche
+resetSearch.addEventListener("click", async () => {
+	try {
+		resetSearch.style.display = "none";
+
+		const response = await fetchBooks(1);
+		renderBooks(response.data);
+	} catch (error) {
+		console.error(
+			"Erreur lors de la réinitialisation de la recherche :",
+			error,
+		);
+		alert("Erreur lors de la réinitialisation de la recherche des livres");
+	}
+});
 
 // ==============================
 // Gestion du Dialog de modification
@@ -52,7 +88,7 @@ function attachEditListeners() {
 						payload.id,
 						updatedTitle,
 						updatedAuthor,
-						updatedYear
+						updatedYear,
 					);
 					console.log("Livre mis à jour :", sendBook);
 
@@ -77,8 +113,14 @@ function attachEditListeners() {
 // ==============================
 // Fonctions API
 // ==============================
-async function fetchBooks(page = 1) {
-	const response = await fetch(`${API_URL}/api/books?page=${page}&limit=6`);
+async function fetchBooks(page = 1, filter = "") {
+	const params = new URLSearchParams({
+		page,
+		limit: 6,
+		...(filter && { searched: filter }), // Ajouter searched seulement si filter existe
+	});
+
+	const response = await fetch(`${API_URL}/api/books?${params.toString()}`);
 	return await response.json();
 }
 

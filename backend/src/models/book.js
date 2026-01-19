@@ -7,18 +7,20 @@ class Book {
 		return result.rows;
 	}
 
-	static async findAllWithAuthors(limit = 6, offset = 0) {
-		const result = await pool.query(
-			`
-			SELECT books.*, 
-				authors.full_name 
+	static async findAllWithAuthors(limit = 6, offset = 0, filtered) {
+		const query = `
+			SELECT books.*, authors.full_name 
 			FROM books 
 			JOIN authors ON books.author_id = authors.id
-			LIMIT $1
-			OFFSET $2
-		`,
-			[limit, offset]
-		);
+			${filtered ? "WHERE books.title ILIKE $3 OR authors.full_name ILIKE $4" : ""}
+			LIMIT $1 OFFSET $2
+		`;
+
+		const params = filtered
+			? [limit, offset, `%${filtered}%`, `%${filtered}%`]
+			: [limit, offset];
+
+		const result = await pool.query(query, params);
 		return result.rows;
 	}
 
@@ -35,7 +37,7 @@ class Book {
 	static async createBook(title, authorId, year) {
 		const result = await pool.query(
 			"INSERT INTO books (title, author_id, year) VALUES ($1, $2, $3) RETURNING id",
-			[title, authorId, year]
+			[title, authorId, year],
 		);
 		return result.rows[0].id;
 	}
@@ -43,7 +45,7 @@ class Book {
 	static async updateBook(title, year, id) {
 		const result = await pool.query(
 			"UPDATE books SET title = $1, year = $2 WHERE id = $3",
-			[title, year, id]
+			[title, year, id],
 		);
 
 		return result.rowCount;
@@ -52,7 +54,7 @@ class Book {
 	static async updateAvailability(bookId, available) {
 		const result = await pool.query(
 			"UPDATE books SET available = $1 WHERE id = $2",
-			[available, bookId]
+			[available, bookId],
 		);
 		return result.rowCount;
 	}

@@ -13,14 +13,15 @@ apibookRouter.get("/", async (req, res) => {
 
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 6;
+		const searched = req.query.searched || "";
 		const offset = (page - 1) * limit;
 
-		const books = await Book.findAllWithAuthors(limit, offset);
+		const allBooks = await Book.findAllWithAuthors(limit, offset, searched);
 		const total = await Book.count();
 
-		console.table(books);
+		console.table(allBooks);
 		res.status(200).json({
-			data: books,
+			data: allBooks,
 			pagination: {
 				page,
 				limit,
@@ -40,7 +41,7 @@ apibookRouter.get("/available/:id", async (req, res) => {
 		const id = req.params.id;
 		const books = await pool.query(
 			`SELECT * FROM books WHERE available = true AND id = $1`,
-			[id]
+			[id],
 		);
 
 		console.table(books.rows);
