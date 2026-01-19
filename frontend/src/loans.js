@@ -100,7 +100,7 @@ applyFiltersButton.addEventListener("click", async (e) => {
 
 	const bookName = document.getElementById("book-name-input").value.trim();
 	const borrowerName = document
-		.getElementById("borrower-name-input")
+		.getElementsByClassName("borrower-name")
 		.value.trim();
 
 	// ✅ Corriger le sélecteur - utiliser querySelector pour les radio buttons
