@@ -8,9 +8,10 @@ authorsRouter.get("/", async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 6;
+		const searched = req.query.searched || "";
 		const offset = (page - 1) * limit;
 
-		const table = await Author.findAll(limit, offset);
+		const table = await Author.findAll(limit, offset, searched);
 		const total = await Author.count();
 
 		console.table(table);

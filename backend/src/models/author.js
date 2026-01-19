@@ -1,15 +1,18 @@
 import pool from "../db/connection.js";
 
 class Author {
-	static async findAll(limit = 6, offset = 0) {
-		const result = await pool.query(
-			`
+	static async findAll(limit = 6, offset = 0, filtered = "") {
+		const query = `
 			SELECT * FROM authors
-			LIMIT $1
-			OFFSET $2
-		`,
-			[limit, offset]
-		);
+			${filtered ? "WHERE full_name ILIKE $3 OR nationality ILIKE $4" : ""}
+			LIMIT $1 OFFSET $2
+		`;
+
+		const params = filtered
+			? [limit, offset, `%${filtered}%`, `%${filtered}%`]
+			: [limit, offset];
+
+		const result = await pool.query(query, params);
 		return result.rows;
 	}
 
@@ -28,7 +31,7 @@ class Author {
 	static async createAuthor(full_name, birth_year, nationality) {
 		const result = await pool.query(
 			"INSERT INTO authors (full_name, birth_year, nationality) VALUES ($1, $2, $3) RETURNING id",
-			[full_name, birth_year, nationality]
+			[full_name, birth_year, nationality],
 		);
 		return result.rows[0].id;
 	}
@@ -36,7 +39,7 @@ class Author {
 	static async updateAuthor(full_name, nationality, id) {
 		const result = await pool.query(
 			"UPDATE authors SET full_name = $1, nationality = $2 WHERE id = $3",
-			[full_name, nationality, id]
+			[full_name, nationality, id],
 		);
 		return result.rowCount;
 	}

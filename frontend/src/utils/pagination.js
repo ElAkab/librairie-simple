@@ -25,26 +25,28 @@ class Pagination {
 	async loadPage(page) {
 		try {
 			const response = await this.fetchFunction(page);
-			
+
 			// Gérer les deux formats de réponse (ancien: array, nouveau: {data, pagination})
 			let data, pagination;
-			
+
 			if (Array.isArray(response)) {
 				// Format ancien (backend non mis à jour)
-				console.warn("⚠️ API retourne l'ancien format (array). Mise à jour backend recommandée.");
+				console.warn(
+					"⚠️ API retourne l'ancien format (array). Mise à jour backend recommandée.",
+				);
 				data = response;
 				pagination = {
 					page: this.currentPage,
 					totalPages: 1, // Impossible de paginer sans ces infos
 					total: response.length,
-					limit: response.length
+					limit: response.length,
 				};
 			} else {
 				// Format nouveau (avec pagination)
 				data = response.data;
 				pagination = response.pagination;
 			}
-			
+
 			this.currentPage = pagination.page;
 			this.totalPages = pagination.totalPages;
 
@@ -55,24 +57,31 @@ class Pagination {
 		}
 	}
 
-    goToPreviousPage() {
-        if (this.currentPage > 1) {
-            this.loadPage(this.currentPage - 1);
-        }
-    }
+	goToPreviousPage() {
+		if (this.currentPage > 1) {
+			this.loadPage(this.currentPage - 1);
+		}
+	}
 
-    goToNextPage() {
-        if (this.currentPage < this.totalPages) {
-            this.loadPage(this.currentPage + 1);
-        }
-    }
+	goToNextPage() {
+		if (this.currentPage < this.totalPages) {
+			this.loadPage(this.currentPage + 1);
+		}
+	}
 
-    updateButtons() {
-        // Désactiver le bouton gauche si on est à la première page
-        this.leftBtn.disabled = this.currentPage === 1;
-        // Désactiver le bouton droit si on est à la dernière page
-        this.rightBtn.disabled = this.currentPage === this.totalPages;
-    }
+	updateButtons() {
+		// Désactiver le bouton gauche si on est à la première page
+		this.leftBtn.disabled = this.currentPage === 1;
+		// Désactiver le bouton droit si on est à la dernière page
+		this.rightBtn.disabled = this.currentPage === this.totalPages;
+	}
+
+	resetToFirstPage() {
+		this.currentPage = 1;
+		this.loadPage(1);
+
+		this.loadPage(1);
+	}
 }
 
 export default Pagination;

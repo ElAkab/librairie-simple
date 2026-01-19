@@ -2,13 +2,59 @@ import API_URL from "./config.js";
 import Pagination from "./utils/pagination.js";
 
 const authorsField = document.getElementById("authors-field");
+const searchInput = document.querySelector("input[type='search']");
+const searchButton = document.querySelector(".search-bar button");
+const resetSearch = document.querySelector(".reset-search");
+
+// ==============================================
+// Gestion de la recherche
+// ==============================================
+searchButton.addEventListener("click", () => getSearchResults());
+
+async function getSearchResults() {
+	try {
+		if (resetSearch) resetSearch.style.display = "flex";
+		
+		const searchValue = searchInput.value.trim();
+		searchInput.value = "";
+
+		const response = await fetchAuthors(1, searchValue);
+		renderAuthors(response.data);
+	} catch (error) {
+		console.error("Erreur lors de la recherche :", error);
+		alert("Erreur lors de la recherche des auteurs");
+	}
+}
+
+resetSearch.addEventListener("click", async () => {
+	try {
+			resetSearch.style.display = "none";
+
+		const response = await fetchAuthors(1);
+		renderAuthors(response.data);
+
+		pagination.resetToFirstPage();
+	} catch (error) {
+		console.error(
+			"Erreur lors de la réinitialisation de la recherche :",
+			error,
+		);
+		alert("Erreur lors de la réinitialisation de la recherche des auteurs");
+	}
+});
 
 // =================================================================
 // Gestion de la pagination
 // =================================================================
-async function fetchAuthors(page = 1) {
+async function fetchAuthors(page = 1, filter = "") {
 	try {
-		const response = await fetch(`${API_URL}/api/authors?page=${page}&limit=6`);
+		const params = new URLSearchParams({
+			page,
+			limit: 6,
+			...(filter && { searched: filter }),
+		});
+
+		const response = await fetch(`${API_URL}/api/authors?${params.toString()}`);
 
 		if (!response.ok) throw new Error("Erreur avec l'API");
 
@@ -44,7 +90,7 @@ function renderAuthors(authors) {
 }
 
 // Initialiser la pagination
-new Pagination(fetchAuthors, renderAuthors);
+const pagination = new Pagination(fetchAuthors, renderAuthors);
 
 // =================================================================
 // Gestion du formulaire de filtre

@@ -114,14 +114,24 @@ function attachEditListeners() {
 // Fonctions API
 // ==============================
 async function fetchBooks(page = 1, filter = "") {
-	const params = new URLSearchParams({
-		page,
-		limit: 6,
-		...(filter && { searched: filter }), // Ajouter searched seulement si filter existe
-	});
+	try {
+		const params = new URLSearchParams({
+			page,
+			limit: 6,
+			...(filter && { searched: filter }),
+		});
 
-	const response = await fetch(`${API_URL}/api/books?${params.toString()}`);
-	return await response.json();
+		const response = await fetch(`${API_URL}/api/books?${params.toString()}`);
+		
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP: ${response.status}`);
+		}
+		
+		return await response.json();
+	} catch (error) {
+		console.error("Erreur lors de la récupération des livres :", error);
+		throw error;
+	}
 }
 
 async function updateBook(id, title, author, year) {
