@@ -76,13 +76,6 @@ nav a:hover {
 	position: relative;
 }
 
-.filter-field {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 100%;
-}
-
 label {
 	margin-bottom: 6px;
 	font-weight: bold;
@@ -90,8 +83,7 @@ label {
 	text-align: center;
 }
 
-input[type="text"],
-input[type="date"],
+input:not([type="search"]),
 select {
 	width: 100%;
 	padding: 8px 16px;
@@ -104,11 +96,19 @@ select {
 		box-shadow 0.3s;
 }
 
-.filter-controls {
-	background-color: black;
+.filter-field {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.filter-field .filter-controls {
+	/* background-color: black; */
 	width: 100%;
 	max-width: 1200px;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	gap: 15px;
@@ -122,48 +122,56 @@ hr {
 }
 
 /* Champ de recherche par nom de livre */
-.book-name {
+.filter-controls .book-name {
 	display: flex;
 	flex-direction: column;
 	padding: 6px;
-}
-
-/* Champ de recherche par nom d'emprunteur */
-.book-name,
-.borrower-name {
-	display: flex;
-	flex-direction: column;
-	padding: 6px;
+	width: 440px;
 }
 
 /* Champ de filtre par statut de prêt */
-.loan-status {
+.filter-controls .loan-status {
+	width: 440px;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	/* flex-direction: column; */
+	justify-content: space-between;
+	gap: 8px;
 	padding: 6px;
 }
 
-/* Conteneur des options de statut */
-.loan-status div {
+/* Options de radio */
+.filter-controls .loan-status .radio-option {
 	display: flex;
-	justify-content: space-between;
-	margin: 12px 0;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	padding: 4px 0;
+	font-weight: normal;
 }
 
-.date-range {
+.filter-controls .loan-status .radio-option input[type="radio"] {
+	width: auto;
+	margin: 0;
+	cursor: pointer;
+}
+
+.filter-controls .loan-status .radio-option span {
+	cursor: pointer;
+}
+
+.filter-controls .date-range {
 	display: flex;
 	flex-direction: column;
 	width: 440px;
 }
 
-.date-range #date-from-container {
+.filter-controls .date-range #date-from-container {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 }
 
-.date-range #date-to-container {
+.filter-controls .date-range #date-to-container {
 	display: flex;
 	flex-direction: column;
 	width: 100%;

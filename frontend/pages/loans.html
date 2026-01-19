@@ -31,9 +31,7 @@
 							id="book-name-input"
 							placeholder="Rechercher un livre..."
 						/>
-					</div>
-					<!-- Critères de nom d'emprunteur -->
-					<div class="borrower-name-input">
+
 						<input
 							type="text"
 							class="borrower-name"
@@ -42,43 +40,22 @@
 					</div>
 					<!-- Critères de statut d'emprunt -->
 					<div class="loan-status">
-						<div>
-							<input
-								type="radio"
-								id="status-all"
-								name="status"
-								value=""
-								checked
-							/>
-							<label for="status-all">Tous</label>
-							<br />
-
-							<input
-								type="radio"
-								id="status-active"
-								name="status"
-								value="active"
-							/>
-							<label for="status-active">En cours</label>
-							<br />
-
-							<input
-								type="radio"
-								id="status-returned"
-								name="status"
-								value="returned"
-							/>
-							<label for="status-returned">Retourné</label>
-							<br />
-
-							<input
-								type="radio"
-								id="status-overdue"
-								name="status"
-								value="overdue"
-							/>
-							<label for="status-overdue">En retard</label>
-						</div>
+						<label class="radio-option">
+							<input type="radio" id="status-all" name="status" value="" checked />
+							<span>Tous</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" id="status-active" name="status" value="active" />
+							<span>En cours</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" id="status-returned" name="status" value="returned" />
+							<span>Retourné</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" id="status-overdue" name="status" value="overdue" />
+							<span>En retard</span>
+						</label>
 					</div>
 					<!-- Critères de plage de dates -->
 					<div class="date-range">
