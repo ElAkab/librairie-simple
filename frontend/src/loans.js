@@ -3,23 +3,62 @@ import Pagination from "./utils/pagination.js";
 
 const loansContainer = document.getElementById("loans");
 const applyFiltersButton = document.getElementById("apply-filters");
+const searchInput = document.querySelector("input[type='search']");
+const searchButton = document.querySelector(".search-bar button");
+const resetSearch = document.querySelector(".reset-search");
+
+searchButton.addEventListener("click", () => getSearchResults());
+
+async function getSearchResults() {
+	try {
+		if (resetSearch) resetSearch.style.display = "flex";
+
+		const query = searchInput.value.trim();
+		searchInput.value = "";
+
+		const response = await fetchLoans(1, query);
+		renderLoans(response.data); // ✅ Extraire .data
+	} catch (error) {
+		console.error("Erreur lors de la recherche :", error);
+		alert("Erreur lors de la recherche des emprunts");
+	}
+}
+
+resetSearch.addEventListener("click", async () => {
+	try {
+		resetSearch.style.display = "none";
+
+		const response = await fetchLoans(1);
+		renderLoans(response.data);
+
+		if (paginationInstance) {
+			paginationInstance.resetToFirstPage();
+		}
+	} catch (error) {
+		console.error("Erreur lors de la réinitialisation :", error);
+		alert("Erreur lors de la réinitialisation de la recherche");
+	}
+});
 
 // ======== Instance de pagination ========
-let paginationInstance = null;
 let currentFilters = {}; // Stocker les filtres actifs
 
 // ======== Fonctions de récupération et rendu ========
-async function fetchLoans(page = 1) {
+async function fetchLoans(page = 1, filter = "") {
 	const params = new URLSearchParams({
 		page,
 		limit: 6,
-		...currentFilters, // Appliquer les filtres actifs
+		...(filter && { filtered: filter }),
 	});
 
 	const response = await fetch(`${API_URL}/api/loans?${params.toString()}`);
 	if (!response.ok) throw new Error("Erreur avec l'API");
 	return await response.json();
 }
+// ...existing code...
+
+// ======== Initialisation ========
+let paginationInstance = new Pagination(fetchLoans, renderLoans);
 
 function renderLoans(loans) {
 	loansContainer.innerHTML = "";
@@ -63,7 +102,11 @@ applyFiltersButton.addEventListener("click", async (e) => {
 	const borrowerName = document
 		.getElementById("borrower-name-input")
 		.value.trim();
-	const status = document.getElementById("loan-status").value;
+
+	// ✅ Corriger le sélecteur - utiliser querySelector pour les radio buttons
+	const status =
+		document.querySelector('input[name="status"]:checked')?.value || "";
+
 	const dateFrom = document.getElementById("date-from").value;
 	const dateTo = document.getElementById("date-to").value;
 
@@ -81,7 +124,7 @@ applyFiltersButton.addEventListener("click", async (e) => {
 	if (paginationInstance) {
 		paginationInstance.destroy();
 	}
-	paginationInstance = new Pagination(fetchLoans, renderLoans);
+	const newPagination = new Pagination(fetchLoans, renderLoans);
 });
 
 // ======== Modale d'édition ========

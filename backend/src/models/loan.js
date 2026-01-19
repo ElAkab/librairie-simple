@@ -2,12 +2,18 @@ import pool from "../db/connection.js";
 import Book from "./book.js";
 
 class Loan {
-	static async findAll() {
-		const result = await pool.query(`
-			SELECT * FROM loans
-			LIMIT 6
-			OFFSET 0
-		`);
+	static async findAll(limit = 6, offset = 0, filtered = "") {
+		const query = `
+        SELECT * FROM loans
+        ${filtered ? "WHERE borrower_name ILIKE $3" : ""}
+        LIMIT $1 OFFSET $2
+    `;
+
+		const params = filtered
+			? [limit, offset, `%${filtered}%`]
+			: [limit, offset];
+
+		const result = await pool.query(query, params);
 		return result.rows;
 	}
 
@@ -24,52 +30,52 @@ class Loan {
 	static async createLoan(book_id, borrower_name, borrowed_date, return_date) {
 		const result = await pool.query(
 			"INSERT INTO loans (book_id, borrower_name, borrowed_date, return_date, loan_status) VALUES ($1, $2, $3, $4, 'active') RETURNING *",
-			[book_id, borrower_name, borrowed_date, return_date]
+			[book_id, borrower_name, borrowed_date, return_date],
 		);
-		
+
 		// Mettre à jour la disponibilité du livre
 		await Book.updateAvailability(book_id, false);
-		
+
 		return result.rows[0];
 	}
 
 	static async updateLoan(borrower_name, loan_status, return_date, id) {
 		const result = await pool.query(
 			"UPDATE loans SET borrower_name = $1, loan_status = $2, return_date = $3 WHERE id = $4",
-			[borrower_name, loan_status, return_date, id]
+			[borrower_name, loan_status, return_date, id],
 		);
-		
+
 		// Si le statut est 'returned', remettre le livre disponible
-		if (loan_status === 'returned') {
+		if (loan_status === "returned") {
 			const loan = await this.findById(id);
 			if (loan) {
 				await Book.updateAvailability(loan.book_id, true);
 			}
 		}
-		
+
 		return result.rowCount;
 	}
 
 	static async deleteById(id) {
 		// Récupérer le loan avant de le supprimer pour remettre le livre disponible
 		const loan = await this.findById(id);
-		
+
 		const result = await pool.query("DELETE FROM loans WHERE id = $1", [id]);
-		
+
 		// Remettre le livre disponible
 		if (loan) {
 			await Book.updateAvailability(loan.book_id, true);
 		}
-		
+
 		return result.rowCount;
 	}
 
 	static async clear() {
 		const result = await pool.query("DELETE FROM loans");
-		
+
 		// Remettre tous les livres disponibles
 		await pool.query("UPDATE books SET available = true");
-		
+
 		return result.rowCount;
 	}
 }

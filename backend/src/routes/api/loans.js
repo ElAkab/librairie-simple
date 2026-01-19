@@ -10,9 +10,10 @@ loansRouter.get("/", async (req, res) => {
 
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 6;
+		const searched = req.query.filtered?.trim() || "";
 		const offset = (page - 1) * limit;
 
-		const loans = await Loan.findAll(limit, offset);
+		const loans = await Loan.findAll(limit, offset, searched);
 		const total = await Loan.count();
 
 		console.table(loans);
@@ -73,7 +74,7 @@ loansRouter.post("/", async (req, res) => {
 			book_id,
 			borrower_name,
 			borrowed_date,
-			return_date
+			return_date,
 		);
 		console.log(newLoan);
 		res.status(200).json({
@@ -103,7 +104,7 @@ loansRouter.put("/:id", async (req, res) => {
 			borrower_name,
 			loan_status,
 			return_date,
-			id
+			id,
 		);
 		console.log(updatedLoan);
 		res.status(200).json({
@@ -138,7 +139,7 @@ loansRouter.patch("/:id", async (req, res) => {
 			borrower_name || currentLoan.borrower_name,
 			status || currentLoan.loan_status,
 			return_date !== undefined ? return_date : currentLoan.return_date,
-			id
+			id,
 		);
 		console.log(updatedLoan);
 		res.status(200).json({

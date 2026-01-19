@@ -99,7 +99,9 @@ select {
 	border-radius: 8px;
 	box-shadow: 0 0 1px 3px rgba(0, 0, 0, 0.1);
 	margin: 6px 0;
-	transition: border-color 0.3s, box-shadow 0.3s;
+	transition:
+		border-color 0.3s,
+		box-shadow 0.3s;
 }
 
 .filter-controls {
@@ -189,6 +191,17 @@ hr {
 	background-color: #0056b3;
 }
 
+.reset-search {
+	display: none;
+	background: rgba(0, 103, 155, 0.7);
+	color: white;
+	padding: 8px;
+	font-weight: 700;
+	border-radius: 15px;
+	cursor: pointer;
+	margin: 18px;
+}
+
 .navigation-buttons {
 	display: flex;
 	justify-content: center;
@@ -250,7 +263,9 @@ h2 {
 	background-color: #ffffff;
 	border: solid 1px black;
 	box-shadow: 10px 3px 5px 0 rgba(0, 0, 0, 0.3);
-	transition: box-shadow 0.3s, transform 0.3s;
+	transition:
+		box-shadow 0.3s,
+		transform 0.3s;
 	cursor: pointer;
 }
 
@@ -269,7 +284,9 @@ h2 {
 	font-weight: bolder;
 	cursor: pointer;
 	font-weight: bold;
-	transition: background-color 0.3s, transform 0.3s;
+	transition:
+		background-color 0.3s,
+		transform 0.3s;
 }
 
 #loans .loan-card .delete-loan-button:hover {
