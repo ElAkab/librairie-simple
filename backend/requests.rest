@@ -121,6 +121,17 @@ DELETE http://localhost:3000/api/loans/4
 DELETE http://localhost:3000/api/loans
 
 ###############################################
+# AUTH
+###############################################
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "testUser",
+    "password": "123"
+}
+
+###############################################
 # DEV ROUTES
 ###############################################
 ### Route de test SQL

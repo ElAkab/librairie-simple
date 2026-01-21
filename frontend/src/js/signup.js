@@ -37,6 +37,8 @@ async function sendData(data) {
 
 		console.log("Réponse du serveur :", response);
 		alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+
+		window.location.href = "/";
 	} catch (error) {
 		console.error("Erreur lors de l'envoie des données :", error);
 		alert(`Erreur: ${error.message}`);
