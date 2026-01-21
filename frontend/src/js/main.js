@@ -1,6 +1,6 @@
-import createCard from "./utils/card.js";
+import createCard from "../utils/card.js";
 import API_URL from "./config.js";
-import Pagination from "./utils/pagination.js";
+import Pagination from "../utils/pagination.js";
 
 const app = document.getElementById("container");
 const searchInput = document.querySelector("input[type='search']");
@@ -122,11 +122,11 @@ async function fetchBooks(page = 1, filter = "") {
 		});
 
 		const response = await fetch(`${API_URL}/api/books?${params.toString()}`);
-		
+
 		if (!response.ok) {
 			throw new Error(`Erreur HTTP: ${response.status}`);
 		}
-		
+
 		return await response.json();
 	} catch (error) {
 		console.error("Erreur lors de la récupération des livres :", error);

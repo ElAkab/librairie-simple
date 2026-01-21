@@ -1,5 +1,5 @@
 import API_URL from "./config.js";
-import Pagination from "./utils/pagination.js";
+import Pagination from "../utils/pagination.js";
 
 const authorsField = document.getElementById("authors-field");
 const searchInput = document.querySelector("input[type='search']");
@@ -14,7 +14,7 @@ searchButton.addEventListener("click", () => getSearchResults());
 async function getSearchResults() {
 	try {
 		if (resetSearch) resetSearch.style.display = "flex";
-		
+
 		const searchValue = searchInput.value.trim();
 		searchInput.value = "";
 
@@ -28,7 +28,7 @@ async function getSearchResults() {
 
 resetSearch.addEventListener("click", async () => {
 	try {
-			resetSearch.style.display = "none";
+		resetSearch.style.display = "none";
 
 		const response = await fetchAuthors(1);
 		renderAuthors(response.data);

@@ -1,5 +1,5 @@
 import API_URL from "./config.js";
-import Pagination from "./utils/pagination.js";
+import Pagination from "../utils/pagination.js";
 
 const loansContainer = document.getElementById("loans");
 const applyFiltersButton = document.getElementById("apply-filters");

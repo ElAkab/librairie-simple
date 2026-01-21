@@ -11,7 +11,10 @@ try {
 	const content = readFileSync(indexPath, "utf-8");
 
 	// Vérifications basiques
-	if (!content.includes("<!DOCTYPE html>")) {
+	if (
+		!content.includes("<!DOCTYPE html>") &&
+		!content.includes("<!doctype html>")
+	) {
 		throw new Error("DOCTYPE manquant");
 	}
 

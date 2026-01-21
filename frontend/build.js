@@ -16,12 +16,12 @@ fs.mkdirSync(pagesDistDir);
 
 // 2. Bundler chaque point d'entrée séparément
 const entryPoints = {
-	"bundle-main": "./src/main.js",
-	"bundle-authors": "./src/authors.js",
-	"bundle-loans": "./src/loans.js",
-	"bundle-form": "./src/form.js",
-	"bundle-login": "./src/login.js",
-	"bundle-signup": "./src/signup.js",
+	"bundle-main": "./src/js/main.js",
+	"bundle-authors": "./src/js/authors.js",
+	"bundle-loans": "./src/js/loans.js",
+	"bundle-form": "./src/js/form.js",
+	"bundle-login": "./src/js/login.js",
+	"bundle-signup": "./src/js/signup.js",
 };
 
 // Bundler avec esbuild : Chacun dans un fichier minifié séparé
@@ -30,7 +30,7 @@ for (const [name, entry] of Object.entries(entryPoints)) {
 		entryPoints: [entry],
 		bundle: true,
 		minify: true,
-		outfile: `${distDir}/src/${name}.min.js`,
+		outfile: `${distDir}/js/${name}.min.js`,
 	});
 }
 
@@ -59,33 +59,33 @@ async function updateHtmlScript(htmlPath, outputPath, scriptName) {
 await updateHtmlScript(
 	"./index.html",
 	`${distDir}/index.html`,
-	"./src/bundle-main.min.js",
+	"./js/bundle-main.min.js",
 );
 await updateHtmlScript(
 	"./pages/authors.html",
 	`${pagesDistDir}/authors.html`,
-	"../src/bundle-authors.min.js",
+	"../js/bundle-authors.min.js",
 );
 await updateHtmlScript(
 	"./pages/loans.html",
 	`${pagesDistDir}/loans.html`,
-	"../src/bundle-loans.min.js",
+	"../js/bundle-loans.min.js",
 );
 await updateHtmlScript(
 	"./pages/form.html",
 	`${pagesDistDir}/form.html`,
-	"../src/bundle-form.min.js",
+	"../js/bundle-form.min.js",
 );
 // Pages de login et signup
 await updateHtmlScript(
 	"./pages/login.html",
 	`${pagesDistDir}/login.html`,
-	"../src/bundle-login.min.js",
+	"../js/bundle-login.min.js",
 );
 await updateHtmlScript(
 	"./pages/signup.html",
 	`${pagesDistDir}/signup.html`,
-	"../src/bundle-signup.min.js",
+	"../js/bundle-signup.min.js",
 );
 
 // 4. Minifier et copier les fichiers CSS depuis src/
@@ -99,21 +99,22 @@ const cssFiles = [
 ];
 
 const srcDistDir = `${distDir}/src`;
-if (!fs.existsSync(srcDistDir)) {
-	fs.mkdirSync(srcDistDir);
+const cssDistDir = `${distDir}/css`;
+if (!fs.existsSync(cssDistDir)) {
+	fs.mkdirSync(cssDistDir);
 }
 
 const cleanCSS = new CleanCSS({ level: 2 });
 
 for (const cssFile of cssFiles) {
-	const cssContent = fs.readFileSync(`./src/${cssFile}`, "utf-8");
+	const cssContent = fs.readFileSync(`./src/css/${cssFile}`, "utf-8");
 	const minified = cleanCSS.minify(cssContent);
 
 	if (minified.errors.length > 0) {
 		console.error(`❌ Erreur CSS pour ${cssFile}:`, minified.errors);
 	}
 
-	fs.writeFileSync(`${srcDistDir}/${cssFile}`, minified.styles);
+	fs.writeFileSync(`${cssDistDir}/${cssFile}`, minified.styles);
 }
 
 console.log("✅ Build terminé !");
