@@ -18,7 +18,7 @@ try {
 		throw new Error("DOCTYPE manquant");
 	}
 
-	if (!content.includes("./src/main.js")) {
+	if (!content.includes("./js/bundle-main.min.js")) {
 		throw new Error("main.js non chargé");
 	}
 
