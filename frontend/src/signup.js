@@ -1,3 +1,5 @@
+import API_URL from "./config.js";
+
 const submitBtn = document.querySelector("button[type='submit']");
 
 submitBtn.addEventListener("click", (e) => {
@@ -22,9 +24,10 @@ submitBtn.addEventListener("click", (e) => {
 
 async function sendData(data) {
 	try {
-		const req = await fetch("/api/auth/signup", {
+		const req = await fetch(`${API_URL}/api/auth/signup`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: "include",
 			body: JSON.stringify(data),
 		});
 
@@ -36,5 +39,6 @@ async function sendData(data) {
 		alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
 	} catch (error) {
 		console.error("Erreur lors de l'envoie des données :", error);
+		alert(`Erreur: ${error.message}`);
 	}
 }
