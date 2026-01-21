@@ -38,10 +38,31 @@ for (const [name, entry] of Object.entries(entryPoints)) {
 async function updateHtmlScript(htmlPath, outputPath, scriptName) {
 	let html = fs.readFileSync(htmlPath, "utf-8");
 
-	// Remplacer tous les scripts src (avec ou sans type="module")
+	// Remplacer les chemins JS dev par les bundles minifiés
 	html = html.replace(
-		/<script\s+[^>]*src=["'][^"']*["'][^>]*><\/script>/g,
-		`<script src="${scriptName}"></script>`,
+		/<script\s+[^>]*src=["'][^"']*src\/js\/([a-zA-Z0-9_-]+)\.js"[^>]*type="module"[^>]*><\/script>/g,
+		(match, name) => {
+			// correspondance pour main.js, authors.js, etc.
+			let bundleName = name
+				.replace("main", "bundle-main.min")
+				.replace("authors", "bundle-authors.min")
+				.replace("loans", "bundle-loans.min")
+				.replace("form", "bundle-form.min")
+				.replace("login", "bundle-login.min")
+				.replace("signup", "bundle-signup.min");
+			// Chemin relatif selon la page
+			let prefix = outputPath.includes("/pages/") ? "../js/" : "./js/";
+			return `<script src="${prefix}${bundleName}.js" type="module"></script>`;
+		},
+	);
+
+	// Remplacer les chemins CSS dev par les minifiés
+	html = html.replace(
+		/<link rel="stylesheet" href="([.]{1,2}\/)?src\/css\/([a-zA-Z0-9_-]+)\.css"\s*\/>/g,
+		(match, prefix, name) => {
+			let cssPrefix = outputPath.includes("/pages/") ? "../css/" : "./css/";
+			return `<link rel="stylesheet" href="${cssPrefix}${name}.css" />`;
+		},
 	);
 
 	// Minification HTML
