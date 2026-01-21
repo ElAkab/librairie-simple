@@ -38,9 +38,9 @@ for (const [name, entry] of Object.entries(entryPoints)) {
 async function updateHtmlScript(htmlPath, outputPath, scriptName) {
 	let html = fs.readFileSync(htmlPath, "utf-8");
 
-	// Remplacer les imports module par le bundle (supporte les 2 ordres d'attributs)
+	// Remplacer tous les scripts src (avec ou sans type="module")
 	html = html.replace(
-		/<script\s+(?:src="[^"]*"[^>]*type="module"|type="module"[^>]*src="[^"]*")[^>]*><\/script>/g,
+		/<script\s+[^>]*src=["'][^"']*["'][^>]*><\/script>/g,
 		`<script src="${scriptName}"></script>`,
 	);
 
