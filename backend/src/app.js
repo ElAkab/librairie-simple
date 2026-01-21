@@ -1,10 +1,14 @@
 // import Author from "./models/author.js";
-import Book from "./models/book.js";
+// import Book from "./models/book.js";
+import User from "./models/user.js";
 import pool, { seed } from "./db/connection.js";
 import express from "express";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import authorsRouter from "./routes/api/authors.js";
 import apiBookRouter from "./routes/api/books.js";
 import loansRouter from "./routes/api/loans.js";
+import { authRouter } from "./routes/api/auth.js";
 import devRouter from "./routes/dev.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -48,6 +52,30 @@ await initializeDatabase();
 const app = express();
 app.use(express.json());
 
+// Configurer le session store PostgreSQL
+const PgSession = connectPgSimple(session);
+
+// Configurer les sessions avec store PostgreSQL
+app.use(
+	session({
+		store: new PgSession({
+			pool: pool, // Utiliser le pool PostgreSQL existant
+			tableName: "user_sessions", // Nom de la table pour stocker les sessions
+			createTableIfMissing: true, // Créer automatiquement la table si elle n'existe pas
+		}),
+		secret: process.env.SESSION_SECRET || "default_secret_change_in_production",
+		resave: false, // Ne pas sauvegarder la session si elle n'a pas été modifiée
+		saveUninitialized: false, // Ne pas créer de session tant qu'on n'a rien stocké
+		cookie: {
+			secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
+			httpOnly: true, // Empêche l'accès via JavaScript (protection XSS)
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // 'none' pour cross-origin en prod
+		},
+		name: "sessionId", // Nom du cookie (au lieu du défaut 'connect.sid')
+	}),
+);
+
 // Configurer CORS pour autoriser les requêtes depuis le frontend
 app.use(
 	cors({
@@ -56,7 +84,7 @@ app.use(
 				? process.env.FRONTEND_URL
 				: ["http://localhost:5173", "http://localhost:8080"],
 		credentials: true, // Autoriser l'envoi des cookies si nécessaire
-	})
+	}),
 );
 
 const PORT = process.env.PORT;
@@ -65,6 +93,7 @@ const PORT = process.env.PORT;
 app.use("/api/authors", authorsRouter);
 app.use("/api/books", apiBookRouter);
 app.use("/api/loans", loansRouter);
+app.use("/api/auth", authRouter);
 
 // Routes de développement/debug
 app.use(devRouter);

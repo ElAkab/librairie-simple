@@ -1,11 +1,49 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Bibliothèque | Sign up</title>
+		<title>Bibliothèque | Inscription</title>
+		<link rel="stylesheet" href="../src/signup.css" />
 	</head>
 	<body>
-		<h1>Sign up</h1>
+		<header>
+			<div>
+				<a href="/">Bibliothèque 📚</a>
+			</div>
+		</header>
+
+		<main>
+			<form>
+				<h1>Inscription</h1>
+
+				<hr />
+
+				<label for="username">Nom d'utilisateur :</label>
+				<input
+					type="text"
+					id="username"
+					name="username"
+					placeholder="Tibo_le_supo"
+					required
+				/>
+
+				<label for="email">Email :</label>
+				<input
+					type="email"
+					id="email"
+					name="email"
+					placeholder="tibo@example.com"
+					required
+				/>
+
+				<label for="password">Mot de passe :</label>
+				<input type="password" id="password" name="password" required />
+
+				<button type="submit">S'inscrire</button>
+			</form>
+		</main>
+
+		<script src="../src/signup.js"></script>
 	</body>
 </html>
