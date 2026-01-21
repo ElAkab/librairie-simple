@@ -1,9 +1,4 @@
--- Supprimer les tables existantes pour recréer avec le bon schéma
-DROP TABLE IF EXISTS loans CASCADE;
-DROP TABLE IF EXISTS books CASCADE;
-DROP TABLE IF EXISTS authors CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-
+-- NE PAS SUPPRIMER EN PRODUCTION - Seulement créer si inexistantes
 CREATE TABLE IF NOT EXISTS authors (
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
