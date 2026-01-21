@@ -4,25 +4,40 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Bibliothèque | Login</title>
+		<link rel="stylesheet" href="../src/login.css" />
 	</head>
 	<body>
 		<header>
-			<div>
-				<span>Bibliothèque 📚</span>
-			</div>
+			<a href="/">Bibliothèque 📚</a>
 		</header>
 
 		<main>
 			<form>
-				<h1>Login</h1>
-				<label for="username">Username:</label>
-				<input type="text" id="username" name="username" required />
+				<div>
+					<h1>Login</h1>
+					<hr />
+				</div>
 
-				<label for="password">Password:</label>
-				<input type="password" id="password" name="password" required />
+				<div>
+					<label for="username">Username:</label>
+					<input
+						type="text"
+						id="username"
+						name="username"
+						placeholder="David_Getta"
+						required
+					/>
+				</div>
+
+				<div>
+					<label for="password">Password:</label>
+					<input type="password" id="password" name="password" required />
+				</div>
 
 				<button type="submit">Login</button>
 			</form>
 		</main>
+
+		<script src="../src/login.js"></script>
 	</body>
 </html>

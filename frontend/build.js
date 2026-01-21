@@ -20,6 +20,8 @@ const entryPoints = {
 	"bundle-authors": "./src/authors.js",
 	"bundle-loans": "./src/loans.js",
 	"bundle-form": "./src/form.js",
+	"bundle-login": "./src/login.js",
+	"bundle-signup": "./src/signup.js",
 };
 
 // Bundler avec esbuild : Chacun dans un fichier minifié séparé
@@ -39,7 +41,7 @@ async function updateHtmlScript(htmlPath, outputPath, scriptName) {
 	// Remplacer les imports module par le bundle (supporte les 2 ordres d'attributs)
 	html = html.replace(
 		/<script\s+(?:src="[^"]*"[^>]*type="module"|type="module"[^>]*src="[^"]*")[^>]*><\/script>/g,
-		`<script src="${scriptName}"></script>`
+		`<script src="${scriptName}"></script>`,
 	);
 
 	// Minification HTML
@@ -57,26 +59,44 @@ async function updateHtmlScript(htmlPath, outputPath, scriptName) {
 await updateHtmlScript(
 	"./index.html",
 	`${distDir}/index.html`,
-	"./src/bundle-main.min.js"
+	"./src/bundle-main.min.js",
 );
 await updateHtmlScript(
 	"./pages/authors.html",
 	`${pagesDistDir}/authors.html`,
-	"../src/bundle-authors.min.js"
+	"../src/bundle-authors.min.js",
 );
 await updateHtmlScript(
 	"./pages/loans.html",
 	`${pagesDistDir}/loans.html`,
-	"../src/bundle-loans.min.js"
+	"../src/bundle-loans.min.js",
 );
 await updateHtmlScript(
 	"./pages/form.html",
 	`${pagesDistDir}/form.html`,
-	"../src/bundle-form.min.js"
+	"../src/bundle-form.min.js",
+);
+// Pages de login et signup
+await updateHtmlScript(
+	"./pages/login.html",
+	`${pagesDistDir}/login.html`,
+	"../src/bundle-login.min.js",
+);
+await updateHtmlScript(
+	"./pages/signup.html",
+	`${pagesDistDir}/signup.html`,
+	"../src/bundle-signup.min.js",
 );
 
 // 4. Minifier et copier les fichiers CSS depuis src/
-const cssFiles = ["style.css", "authors.css", "loans.css", "form.css"];
+const cssFiles = [
+	"style.css",
+	"authors.css",
+	"loans.css",
+	"form.css",
+	"login.css",
+	"signup.css",
+];
 
 const srcDistDir = `${distDir}/src`;
 if (!fs.existsSync(srcDistDir)) {
