@@ -87,7 +87,9 @@ export async function deleteById(req, res) {
 			});
 		}
 
-		req.session.destroy();
+		req.session.destroy(() => {
+			res.json({ message: "Logged out" });
+		});
 
 		res.json({
 			message: "Utilisateur et session supprimé avec succès.",
