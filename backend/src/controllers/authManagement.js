@@ -1,5 +1,29 @@
 import User from "../models/user.js";
 
+export async function getUserById(req, res) {
+	try {
+		const { id } = req.params;
+		const result = await User.getById(id);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({
+				message: "Utilisateur non trouvé.",
+			});
+		}
+
+		res.status(200).json({
+			message: "Utilisateur récupéré avec succès.",
+			result: result.rows[0], // Renvoie le premier (et unique) utilisateur trouvé
+			isAuth: true,
+		});
+	} catch (error) {
+		console.error("Erreur lors de la récupération de l'utilisateur :", error);
+		res.status(500).json({
+			message: "Erreur serveur lors de la récupération de l'utilisateur.",
+		});
+	}
+}
+
 export async function getAllUsers(req, res) {
 	try {
 		const result = await User.getAll();

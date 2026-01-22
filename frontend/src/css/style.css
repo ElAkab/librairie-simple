@@ -98,6 +98,41 @@ nav a:hover {
 	background-color: #0056b3;
 }
 
+/* Options utilisateur */
+.user-menu {
+	position: relative;
+	/* display: inline-block; */
+	display: none;
+}
+
+.menu-options {
+	display: none;
+	position: absolute;
+	right: 0;
+	background: #fff;
+	border: 1px solid #ddd;
+	padding: 5px;
+}
+
+.menu-options button,
+.menu-options a {
+	text-decoration: none;
+	display: block;
+	color: #333;
+	width: 100%;
+	border: none;
+	background: none;
+	padding: 8px;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+}
+
+.menu-options button:hover,
+.menu-options a:hover {
+	background: #f0f0f0;
+}
+
 .main-container {
 	height: fit-content;
 	width: 100%;

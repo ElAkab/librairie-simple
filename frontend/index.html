@@ -19,9 +19,20 @@
 				<a href="./pages/form.html">Formulaire</a>
 			</nav>
 
+			<!-- Field d'authentification -->
 			<div class="auth-field">
 				<a href="./pages/login.html">Login</a>
 				<a href="./pages/signup.html">Signup</a>
+			</div>
+
+			<!-- Boutons de l'utilisateur -->
+			<div class="user-menu">
+				<button id="user-menu-button">Mon compte ▾</button>
+
+				<div id="user-menu-options" class="menu-options">
+					<a href="./pages/profile.html" id="profile-button">Profil</a>
+					<button id="logout-button">Se déconnecter</button>
+				</div>
 			</div>
 		</header>
 
@@ -56,6 +67,6 @@
 			</div>
 		</main>
 
-		<script src="./src/js/main.js" type="module"></script>
+		<script src="./src/js/main.js" type="module" defer></script>
 	</body>
 </html>

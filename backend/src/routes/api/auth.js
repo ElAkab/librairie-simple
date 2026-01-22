@@ -14,6 +14,9 @@ authRouter.post("/login", login);
 // Route pour récupérer tous les utilisateurs
 authRouter.get("/all", auth.getAllUsers);
 
+// Route pour récupérer un utilisateur par ID
+authRouter.get("/:id", auth.getUserById);
+
 // Route pour mettre à jour un utilisateur
 authRouter.put("/update/:id", auth.updateUsername);
 

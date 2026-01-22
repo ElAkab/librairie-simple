@@ -31,12 +31,21 @@ async function sendData(data) {
 			body: JSON.stringify(data),
 		});
 
+		if (!req.ok) {
+			// Affiche le message d'erreur du backend si présent
+			throw new Error(res.message || "Erreur API");
+		}
+
 		const res = await req.json();
 
-		if (!res.ok) throw new Error("Erreur API");
-
 		console.log("Réponse du serveur :", res);
-		alert("Connexion réussie ! Vous pouvez maintenant vous connecter.");
+		alert(
+			"Connexion réussie ! Vous pouvez maintenant accéder à l'application.",
+		);
+
+		localStorage.setItem("userId", res.user.id);
+		localStorage.setItem("username", res.user.username);
+		localStorage.setItem("role", res.user.role);
 
 		window.location.href = "/";
 	} catch (error) {

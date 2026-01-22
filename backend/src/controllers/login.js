@@ -37,6 +37,7 @@ export async function login(req, res) {
 		// 5 : Réponse de succès
 		res.status(200).json({
 			message: "Connexion réussie !",
+			user: req.session.user, // Renvoie les informations de l'utilisateur connecté pour le frontend
 		});
 	} catch (error) {
 		console.error("Erreur serveur lors de la connexion :", error);
