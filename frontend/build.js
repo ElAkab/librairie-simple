@@ -13,6 +13,10 @@ if (fs.existsSync(distDir)) {
 }
 fs.mkdirSync(distDir);
 fs.mkdirSync(pagesDistDir);
+const jsDistDir = `${distDir}/js`;
+if (!fs.existsSync(jsDistDir)) {
+	fs.mkdirSync(jsDistDir);
+}
 
 // 2. Bundler chaque point d'entrée séparément
 const entryPoints = {
@@ -30,51 +34,59 @@ for (const [name, entry] of Object.entries(entryPoints)) {
 		entryPoints: [entry],
 		bundle: true,
 		minify: true,
-		outfile: `${distDir}/js/${name}.min.js`,
+		outfile: `${jsDistDir}/${name}.min.js`,
+		format: "esm",
 	});
 }
 
 // 3. Copier et modifier les fichiers HTML
 async function updateHtmlScript(htmlPath, outputPath, scriptName) {
-	let html = fs.readFileSync(htmlPath, "utf-8");
+	       let html = fs.readFileSync(htmlPath, "utf-8");
 
-	// Remplacer les chemins JS dev par les bundles minifiés
-	html = html.replace(
-		/<script\s+[^>]*src=["'][^"']*src\/js\/([a-zA-Z0-9_-]+)\.js"[^>]*type="module"[^>]*><\/script>/g,
-		(match, name) => {
-			// correspondance pour main.js, authors.js, etc.
-			let bundleName = name
-				.replace("main", "bundle-main.min")
-				.replace("authors", "bundle-authors.min")
-				.replace("loans", "bundle-loans.min")
-				.replace("form", "bundle-form.min")
-				.replace("login", "bundle-login.min")
-				.replace("signup", "bundle-signup.min");
-			// Chemin relatif selon la page
-			let prefix = outputPath.includes("/pages/") ? "../js/" : "./js/";
-			return `<script src="${prefix}${bundleName}.js" type="module"></script>`;
-		},
-	);
+			 // Remplacer les chemins JS dev par les bundles minifiés
+			 html = html.replace(
+				 /<script\s+[^>]*src=["'][.]{1,2}\/src\/js\/([a-zA-Z0-9_-]+)\.js"[^>]*type="module"[^>]*><\/script>/g,
+				 (match, name) => {
+					 let bundleName = name
+						 .replace("main", "bundle-main.min")
+						 .replace("authors", "bundle-authors.min")
+						 .replace("loans", "bundle-loans.min")
+						 .replace("form", "bundle-form.min")
+						 .replace("login", "bundle-login.min")
+						 .replace("signup", "bundle-signup.min");
+					 let prefix = outputPath.includes("/pages/") ? "../js/" : "./js/";
+					 return `<script src="${prefix}${bundleName}.js" type="module"></script>`;
+				 },
+			 );
 
-	// Remplacer les chemins CSS dev par les minifiés
-	html = html.replace(
-		/<link rel="stylesheet" href="([.]{1,2}\/)?src\/css\/([a-zA-Z0-9_-]+)\.css"\s*\/>/g,
-		(match, prefix, name) => {
-			let cssPrefix = outputPath.includes("/pages/") ? "../css/" : "./css/";
-			return `<link rel="stylesheet" href="${cssPrefix}${name}.css" />`;
-		},
-	);
+	       // Remplacer les chemins CSS dev par les minifiés
+	       html = html.replace(
+		       /<link rel="stylesheet" href="([.]{1,2}\/)src\/css\/([a-zA-Z0-9_-]+)\.css"\s*\/>/g,
+		       (match, prefix, name) => {
+			       let cssPrefix = outputPath.includes("/pages/") ? "../css/" : "./css/";
+			       return `<link rel="stylesheet" href="${cssPrefix}${name}.css" />`;
+		       },
+	       );
 
-	// Minification HTML
-	html = await minify(html, {
-		collapseWhitespace: true,
-		removeComments: true,
-		removeRedundantAttributes: true,
-		minifyCSS: true,
-		minifyJS: true,
-	});
+	       // Injecter style.css en premier (pour les styles communs)
+	       let cssPrefix = outputPath.includes("/pages/") ? "../css/" : "./css/";
+	       if (!html.includes(`${cssPrefix}style.css`)) {
+		       html = html.replace(
+			       /(<head[^>]*>)/i,
+			       `$1\n<link rel="stylesheet" href="${cssPrefix}style.css" />`
+		       );
+	       }
 
-	fs.writeFileSync(outputPath, html);
+	       // Minification HTML
+	       html = await minify(html, {
+		       collapseWhitespace: true,
+		       removeComments: true,
+		       removeRedundantAttributes: true,
+		       minifyCSS: true,
+		       minifyJS: true,
+	       });
+
+	       fs.writeFileSync(outputPath, html);
 }
 
 await updateHtmlScript(
@@ -119,10 +131,9 @@ const cssFiles = [
 	"signup.css",
 ];
 
-const srcDistDir = `${distDir}/src`;
 const cssDistDir = `${distDir}/css`;
 if (!fs.existsSync(cssDistDir)) {
-	fs.mkdirSync(cssDistDir);
+  fs.mkdirSync(cssDistDir);
 }
 
 const cleanCSS = new CleanCSS({ level: 2 });

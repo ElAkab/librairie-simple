@@ -48,7 +48,7 @@ document.getElementById("user-menu-button").addEventListener("click", () => {
 			// localStorage.removeItem("authToken");
 
 			const confirmLogout = confirm(
-				"Êtes-vous sûr de vouloir vous déconnecter ? (Tout progrès sera perdu)",
+				"Êtes-vous sûr de vouloir vous déconnecter ?",
 			);
 			if (confirmLogout) {
 				// Récupérer l'ID utilisateur depuis le localStorage ou le contexte utilisateur
