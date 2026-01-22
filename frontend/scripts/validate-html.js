@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 console.log("🔍 Validation des fichiers HTML...\n");
 
 try {
-	const indexPath = join(__dirname, "../index.html");
+	const indexPath = join(__dirname, "../dist/index.html");
 	const content = readFileSync(indexPath, "utf-8");
 
 	// Vérifications basiques
