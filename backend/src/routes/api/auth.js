@@ -19,3 +19,6 @@ authRouter.put("/update/:id", auth.updateUsername);
 
 // Route pour supprimer tous les utilisateurs
 authRouter.delete("/clear", auth.clearUsers);
+
+// Route pour supprimer un utilisateur par ID
+authRouter.delete("/:id", auth.deleteById);

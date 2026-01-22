@@ -36,7 +36,7 @@ async function sendData(data) {
 		if (!res.ok) throw new Error("Erreur API");
 
 		console.log("Réponse du serveur :", res);
-		alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+		alert("Connexion réussie ! Vous pouvez maintenant vous connecter.");
 
 		window.location.href = "/";
 	} catch (error) {

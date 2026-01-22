@@ -6,13 +6,13 @@ class User {
 		return users;
 	}
 
-	static async count() {
-		const users = await pool.query(`SELECT COUNT(*) FROM users`);
+	static async getById(id) {
+		const users = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
 		return users;
 	}
 
-	static async getById(id) {
-		const users = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+	static async count() {
+		const users = await pool.query(`SELECT COUNT(*) FROM users`);
 		return users;
 	}
 
@@ -29,7 +29,7 @@ class User {
 		return users;
 	}
 
-	static async deleteBy(id) {
+	static async deleteById(id) {
 		const users = await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
 		return users;
 	}
@@ -37,6 +37,13 @@ class User {
 	static async clear() {
 		const users = await pool.query(`DELETE FROM users`);
 		return users;
+	}
+
+	static async checkExistsByUsername(username) {
+		const user = pool.query(`SELECT * FROM users WHERE username = $1`, [
+			username,
+		]);
+		return user;
 	}
 }
 

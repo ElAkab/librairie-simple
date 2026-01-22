@@ -51,6 +51,31 @@ export async function updateUsername(req, res) {
 	}
 }
 
+export async function deleteById(req, res) {
+	try {
+		const { id } = req.params;
+
+		const deleteResult = await User.deleteById(id);
+
+		if (deleteResult.rowCount === 0) {
+			return res.status(404).json({
+				message: "Utilisateur non trouvé.",
+			});
+		}
+
+		req.session.destroy();
+
+		res.json({
+			message: "Utilisateur et session supprimé avec succès.",
+		});
+	} catch (error) {
+		console.error("Erreur lors de la suppression de l'utilisateur :", error);
+		res.status(500).json({
+			message: "Erreur serveur lors de la suppression de l'utilisateur.",
+		});
+	}
+}
+
 export async function clearUsers(req, res) {
 	try {
 		if (!(await User.getAll()).rows.length) {
@@ -61,7 +86,7 @@ export async function clearUsers(req, res) {
 
 		const result = await User.clear();
 
-		res.status(200).json({
+		res.status(205).json({
 			message: "Utilisateurs supprimés avec succès.",
 			result: result.rows,
 		});

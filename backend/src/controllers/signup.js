@@ -6,7 +6,11 @@ import User from "../models/user.js";
 export async function signup(req, res) {
 	try {
 		// 1 : Récupération des données
-		const { username, email, password } = req.body;
+		let { username, email, password } = req.body;
+
+		username = username.trim();
+		email = email.trim();
+		password = password.trim();
 
 		// 2 : Validation des champs et de l'unicité du username et de l'email
 		if (!username || !email || !password)
@@ -24,7 +28,7 @@ export async function signup(req, res) {
 
 		// if (isUserStored) FAUX : ça sera toujours vrai (donc pas assez précis)
 		if (isUserStored.rows.length > 0)
-			return res.status(400).json({ message: "Utilisateur déjà inscrit !" });
+			return res.status(409).json({ message: "Utilisateur déjà inscrit !" });
 
 		// 3 : Hachage du mot de passe
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -42,6 +46,12 @@ export async function signup(req, res) {
 		`,
 			[username, email, hashedPassword, "user"],
 		); // role > user || admin
+
+		req.session.user = {
+			username: username,
+			email: email,
+			role: "user",
+		};
 
 		// 6 : Réponse de succès
 		console.log("Nouvel utilisateur inscrit :", { username, email });
