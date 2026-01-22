@@ -1,8 +1,91 @@
 import API_URL from "./config.js";
+import { isAuth } from "../utils/authInit.js";
+
+const isUserAuth = await isAuth();
+
+const authField = document.querySelector(".auth-field");
+const userMenu = document.querySelector(".user-menu");
+const span = document.querySelector(".main-container span");
+
+const isLoggedIn = !!(isUserAuth && isUserAuth.user);
+const username =
+	isUserAuth && isUserAuth.user ? isUserAuth.user.username : undefined;
+
+authField.style.display = isLoggedIn ? "none" : "flex";
+userMenu.style.display = isLoggedIn ? "inline-block" : "none";
+
+if (span && isLoggedIn) {
+	span.textContent = username
+		? `Ta gueule ${username} !`
+		: "Donc faudrait la fermer un moment..";
+}
+
+// ==============================
+// Gestion du menu utilisateur
+// ==============================
+document.getElementById("user-menu-button").addEventListener("click", () => {
+	const menu = document.getElementById("user-menu-options");
+	if (!menu) return;
+	menu.style.display = menu.style.display === "block" ? "none" : "block";
+
+	const handleClickOutside = (event) => {
+		if (
+			!menu.contains(event.target) &&
+			event.target.id !== "user-menu-button"
+		) {
+			menu.style.display = "none";
+			document.removeEventListener("click", handleClickOutside);
+		}
+	};
+
+	if (menu.style.display === "block") {
+		document.addEventListener("click", handleClickOutside);
+
+		const logoutButton = document.getElementById("logout-button");
+		logoutButton.addEventListener("click", async () => {
+			// Supprimer le token d'authentification (si utilisé)
+			// localStorage.removeItem("authToken");
+
+			const confirmLogout = confirm(
+				"Êtes-vous sûr de vouloir vous déconnecter ? (Tout progrès sera perdu)",
+			);
+			if (confirmLogout) {
+				// Récupérer l'ID utilisateur depuis le localStorage ou le contexte utilisateur
+				const userId = localStorage.getItem("userId");
+				if (!userId) {
+					alert("Impossible de trouver l'ID utilisateur pour la déconnexion.");
+					return;
+				}
+
+				// Appeler l'API de déconnexion
+				const res = await fetch(`${API_URL}/api/auth/logout/${userId}`, {
+					method: "POST",
+					credentials: "include", // Inclure les cookies pour l'authentification
+				});
+
+				if (!res.ok) {
+					alert("Erreur lors de la déconnexion.");
+					return;
+				}
+
+				const data = await res.json();
+
+				alert(data.message);
+				console.log(data.message);
+
+				// Nettoyer le localStorage
+				localStorage.removeItem("userId");
+				localStorage.removeItem("username");
+				localStorage.removeItem("role");
+
+				// Rediriger vers la page de login
+				window.location.href = "/";
+			}
+		});
+	}
+});
 
 const forms = document.querySelectorAll(".add");
-
-// Récupération des données de la db
 
 // Ajout des écouteurs d'événements sur chaque formulaire
 forms.forEach((form) => {
@@ -19,13 +102,13 @@ forms.forEach((form) => {
 			// * Vérification si un auteur similaire existe déjà
 			const isDuplicate = await checkDuplicateAuthor(
 				data.fullName,
-				data.birthYear
+				data.birthYear,
 			);
 
 			// ! Si l'auteur existe déjà, alerter et arrêter
 			if (isDuplicate) {
 				alert(
-					`Un auteur "${data.fullName}" (${data.birthYear}) existe déjà dans la base de données.`
+					`Un auteur "${data.fullName}" (${data.birthYear}) existe déjà dans la base de données.`,
 				);
 				return;
 			}
@@ -43,7 +126,7 @@ forms.forEach((form) => {
 			// ! Si le livre existe déjà, alerter et arrêter
 			if (isDuplicate) {
 				alert(
-					`Le livre "${data.title}" existe déjà pour cet auteur dans la base de données.`
+					`Le livre "${data.title}" existe déjà pour cet auteur dans la base de données.`,
 				);
 				return;
 			}
@@ -59,7 +142,7 @@ forms.forEach((form) => {
 			const availableBooks = await fetchAvailableBooks(data.bookId);
 			if (availableBooks.length === 0) {
 				alert(
-					"Le livre n'est pas disponible pour l'emprunt. Veuillez choisir un autre livre."
+					"Le livre n'est pas disponible pour l'emprunt. Veuillez choisir un autre livre.",
 				);
 				return;
 			}
@@ -177,7 +260,7 @@ async function checkDuplicateAuthor(fullName, birthYear) {
 		return authors.some(
 			(author) =>
 				author.full_name.toLowerCase() === fullName.toLowerCase() &&
-				author.birth_year == birthYear
+				author.birth_year == birthYear,
 		);
 	} catch (error) {
 		console.error("Erreur serveur", error);
@@ -201,7 +284,7 @@ async function checkDuplicateBook(title, authorId) {
 		return books.some(
 			(book) =>
 				book.title.toLowerCase() === title.toLowerCase() &&
-				book.author_id == authorId
+				book.author_id == authorId,
 		);
 	} catch (error) {
 		console.error("Erreur serveur", error);

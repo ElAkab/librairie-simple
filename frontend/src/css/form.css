@@ -66,6 +66,41 @@ nav a:hover {
 	background: #0056b3;
 }
 
+/* Options utilisateur */
+.user-menu {
+	position: relative;
+	/* display: inline-block; */
+	display: none;
+}
+
+.menu-options {
+	display: none;
+	position: absolute;
+	right: 0;
+	background: #fff;
+	border: 1px solid #ddd;
+	padding: 5px;
+}
+
+.menu-options button,
+.menu-options a {
+	text-decoration: none;
+	display: block;
+	color: #333;
+	width: 100%;
+	border: none;
+	background: none;
+	padding: 8px;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+}
+
+.menu-options button:hover,
+.menu-options a:hover {
+	background: #f0f0f0;
+}
+
 .main-container {
 	width: 100%;
 	min-height: 100vh;
@@ -113,7 +148,9 @@ input:not([type="search"]) {
 	border-radius: 8px;
 	box-shadow: 0 0 1px 3px rgba(0, 0, 0, 0.1);
 	margin: 6px 0;
-	transition: border-color 0.3s, box-shadow 0.3s;
+	transition:
+		border-color 0.3s,
+		box-shadow 0.3s;
 }
 
 button[type="submit"] {

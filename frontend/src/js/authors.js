@@ -1,5 +1,90 @@
 import API_URL from "./config.js";
 import Pagination from "../utils/pagination.js";
+import { isAuth } from "../utils/authInit.js";
+
+const isUserAuth = await isAuth();
+
+const authField = document.querySelector(".auth-field");
+const userMenu = document.querySelector(".user-menu");
+const span = document.querySelector(".main-container span");
+
+const isLoggedIn = !!(isUserAuth && isUserAuth.user);
+const username =
+	isUserAuth && isUserAuth.user ? isUserAuth.user.username : undefined;
+
+authField.style.display = isLoggedIn ? "none" : "flex";
+userMenu.style.display = isLoggedIn ? "inline-block" : "none";
+
+if (span && isLoggedIn) {
+	span.textContent = username
+		? `Ta gueule ${username} !`
+		: "Donc faudrait la fermer un moment..";
+}
+
+// ==============================
+// Gestion du menu utilisateur
+// ==============================
+document.getElementById("user-menu-button").addEventListener("click", () => {
+	const menu = document.getElementById("user-menu-options");
+	if (!menu) return;
+	menu.style.display = menu.style.display === "block" ? "none" : "block";
+
+	const handleClickOutside = (event) => {
+		if (
+			!menu.contains(event.target) &&
+			event.target.id !== "user-menu-button"
+		) {
+			menu.style.display = "none";
+			document.removeEventListener("click", handleClickOutside);
+		}
+	};
+
+	if (menu.style.display === "block") {
+		document.addEventListener("click", handleClickOutside);
+
+		const logoutButton = document.getElementById("logout-button");
+		logoutButton.addEventListener("click", async () => {
+			// Supprimer le token d'authentification (si utilisé)
+			// localStorage.removeItem("authToken");
+
+			const confirmLogout = confirm(
+				"Êtes-vous sûr de vouloir vous déconnecter ? (Tout progrès sera perdu)",
+			);
+			if (confirmLogout) {
+				// Récupérer l'ID utilisateur depuis le localStorage ou le contexte utilisateur
+				const userId = localStorage.getItem("userId");
+				if (!userId) {
+					alert("Impossible de trouver l'ID utilisateur pour la déconnexion.");
+					return;
+				}
+
+				// Appeler l'API de déconnexion
+				const res = await fetch(`${API_URL}/api/auth/logout/${userId}`, {
+					method: "POST",
+					credentials: "include", // Inclure les cookies pour l'authentification
+				});
+
+				if (!res.ok) {
+					alert("Erreur lors de la déconnexion.");
+					return;
+				}
+
+				const data = await res.json();
+
+				alert(data.message);
+				console.log(data.message);
+
+				// Nettoyer le localStorage
+				localStorage.removeItem("userId");
+				localStorage.removeItem("username");
+				localStorage.removeItem("role");
+
+				// Rediriger vers la page de login
+				window.location.href = "/";
+			}
+		});
+	}
+});
 
 const authorsField = document.getElementById("authors-field");
 const searchInput = document.querySelector("input[type='search']");

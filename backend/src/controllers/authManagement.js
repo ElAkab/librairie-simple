@@ -75,6 +75,29 @@ export async function updateUsername(req, res) {
 	}
 }
 
+export async function logoutById(req, res) {
+	try {
+		const { id } = req.params;
+
+		const userResult = await User.getById(id);
+
+		if (userResult.rows.length === 0) {
+			return res.status(404).json({
+				message: "Utilisateur non trouvé.",
+			});
+		}
+
+		req.session.destroy(() => {
+			res.json({ message: "Déconnexion réussie (-_-)/)..." });
+		});
+	} catch (error) {
+		console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
+		res.status(500).json({
+			message: "Erreur serveur lors de la déconnexion de l'utilisateur.",
+		});
+	}
+}
+
 export async function deleteById(req, res) {
 	try {
 		const { id } = req.params;
@@ -87,12 +110,8 @@ export async function deleteById(req, res) {
 			});
 		}
 
-		req.session.destroy(() => {
-			res.json({ message: "Logged out" });
-		});
-
 		res.json({
-			message: "Utilisateur et session supprimé avec succès.",
+			message: "Utilisateur supprimé avec succès.",
 		});
 	} catch (error) {
 		console.error("Erreur lors de la suppression de l'utilisateur :", error);

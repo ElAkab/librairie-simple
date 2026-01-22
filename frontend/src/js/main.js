@@ -9,9 +9,9 @@ const authField = document.querySelector(".auth-field");
 const userMenu = document.querySelector(".user-menu");
 const span = document.querySelector(".main-container span");
 
-
 const isLoggedIn = !!(isUserAuth && isUserAuth.user);
-const username = isUserAuth && isUserAuth.user ? isUserAuth.user.username : undefined;
+const username =
+	isUserAuth && isUserAuth.user ? isUserAuth.user.username : undefined;
 
 authField.style.display = isLoggedIn ? "none" : "flex";
 userMenu.style.display = isLoggedIn ? "inline-block" : "none";
@@ -63,10 +63,22 @@ document.getElementById("user-menu-button").addEventListener("click", () => {
 					alert("Impossible de trouver l'ID utilisateur pour la déconnexion.");
 					return;
 				}
-				await fetch(`${API_URL}/api/auth/${userId}`, {
-					method: "DELETE",
+
+				// Appeler l'API de déconnexion
+				const res = await fetch(`${API_URL}/api/auth/logout/${userId}`, {
+					method: "POST",
 					credentials: "include", // Inclure les cookies pour l'authentification
 				});
+
+				if (!res.ok) {
+					alert("Erreur lors de la déconnexion.");
+					return;
+				}
+
+				const data = await res.json();
+
+				alert(data.message);
+				console.log(data.message);
 
 				// Nettoyer le localStorage
 				localStorage.removeItem("userId");

@@ -25,3 +25,6 @@ authRouter.delete("/clear", auth.clearUsers);
 
 // Route pour supprimer un utilisateur par ID
 authRouter.delete("/:id", auth.deleteById);
+
+// Route pour la déconnexion d'un utilisateur
+authRouter.post("/logout/:id", auth.logoutById);
