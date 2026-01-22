@@ -8,6 +8,7 @@
 		"start": "node src/app.js",
 		"dev": "node --watch src/app.js",
 		"db:reset": "node src/scripts/reset-db.js",
+		"db:check": "node src/scripts/check-tables.js",
 		"lint": "node --check src/**/*.js",
 		"validate-db": "node src/scripts/validate-schema.js"
 	},

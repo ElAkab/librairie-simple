@@ -123,6 +123,17 @@ DELETE http://localhost:3000/api/loans
 ###############################################
 # AUTH
 ###############################################
+# Inscription
+POST http://localhost:3000/api/auth/signup
+Content-Type: application/json
+
+{
+    "username": "testUser",
+    "email": "testUser@gmail.com",
+    "password": "123"
+}
+
+### Connection
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
@@ -130,6 +141,20 @@ Content-Type: application/json
     "username": "testUser",
     "password": "123"
 }
+
+### Récupérer tous les utilisateurs
+GET http://localhost:3000/api/auth/all
+
+### Mettre à jour un utilisateur
+PUT http://localhost:3000/api/auth/update/5
+Content-Type: application/json
+
+{
+    "newUsername": "testUser"
+}
+
+### Supprimer tous les utilisateurs
+DELETE http://localhost:3000/api/auth/clear
 
 ###############################################
 # DEV ROUTES
