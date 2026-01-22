@@ -45,6 +45,20 @@ class User {
 		]);
 		return user;
 	}
+
+	// Nouvelle méthode pour mettre à jour la disponibilité d'un utilisateur
+	static async updateAvailabilityById(id, data) {
+		const { available } = data;
+		const users = await pool.query(
+			`
+			UPDATE users 
+			SET available = $1
+			WHERE id = $2
+		`,
+			[available, id],
+		);
+		return users;
+	}
 }
 
 export default User;
