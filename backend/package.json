@@ -36,7 +36,9 @@
 		"validator": "^13.15.26"
 	},
 	"devDependencies": {
+		"@types/node": "^25.0.10",
 		"eslint": "^9.0.0",
-		"prettier": "^3.0.0"
+		"prettier": "^3.0.0",
+		"typescript": "^5.9.3"
 	}
 }
