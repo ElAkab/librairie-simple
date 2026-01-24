@@ -48,14 +48,14 @@ class User {
 
 	// Nouvelle méthode pour mettre à jour la disponibilité d'un utilisateur
 	static async updateAvailabilityById(id, data) {
-		const { available } = data;
+		const { is_active } = data;
 		const users = await pool.query(
 			`
 			UPDATE users 
-			SET available = $1
+			SET is_active = $1
 			WHERE id = $2
 		`,
-			[available, id],
+			[is_active, id],
 		);
 		return users;
 	}

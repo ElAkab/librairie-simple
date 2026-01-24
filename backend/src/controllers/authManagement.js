@@ -87,8 +87,8 @@ export async function logoutById(req, res) {
 			});
 		}
 
-		// Rendre la colonne "available" d'un utilisateur à true lors de la déconnexion
-		await User.updateAvailabilityById(id, { available: true });
+		// Rendre la colonne "is_active" d'un utilisateur à false lors de la déconnexion
+		await User.updateAvailabilityById(id, { is_active: false });
 
 		// Détruire la session de l'utilisateur
 		req.session.destroy(() => {

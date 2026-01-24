@@ -2,7 +2,7 @@ import API_URL from "./config.js";
 
 const submitBtn = document.querySelector("button[type='submit']");
 
-submitBtn.addEventListener("click", (e) => {
+submitBtn.addEventListener("click", async (e) => {
 	e.preventDefault();
 
 	const username = document.getElementById("username").value;
@@ -19,7 +19,7 @@ submitBtn.addEventListener("click", (e) => {
 		password: password,
 	};
 
-	sendData(payload);
+	await sendData(payload);
 });
 
 async function sendData(data) {

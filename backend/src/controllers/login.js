@@ -27,12 +27,17 @@ export async function login(req, res) {
 		if (!passwordCompared)
 			return res.status(400).json({ message: "Mot de passe invalide :/..." });
 
+		const userId = user.rows[0].id;
+
 		// 4 : Création de la session
 		req.session.user = {
-			id: user.rows[0].id,
+			id: userId,
 			username: user.rows[0].username,
 			role: user.rows[0].role,
 		};
+
+		// Rendre la colonne "is_active" d'un utilisateur à true lors de la déconnexion
+		await User.updateAvailabilityById(userId, { is_active: true });
 
 		// 5 : Réponse de succès
 		res.status(200).json({
