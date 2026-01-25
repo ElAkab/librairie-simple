@@ -9,6 +9,19 @@ class User {
 		};
 	}
 
+	static async create(
+		username: string,
+		email: string,
+		hashedPassword: string,
+		role: "user" | "admin",
+	): Promise<UserType> {
+		const result = await pool.query<UserType>(
+			`INSERT INTO users(username, email, password_hash, role) VALUES($1, $2, $3, $4) RETURNING *`,
+			[username, email, hashedPassword, role],
+		);
+		return result.rows[0]; // renvoie un seul utilisateur
+	}
+
 	static async getById(id: number): Promise<UserType | null> {
 		const result = await pool.query<UserType>(
 			`SELECT * FROM users WHERE id = $1`,
@@ -62,11 +75,17 @@ class User {
 	// Nouvelle méthode pour vérifier l'existence d'un utilisateur par son nom d'utilisateur
 	static async checkExistsByUsername(
 		username: string,
-	): Promise<{ rowCount: number }> {
+	): Promise<{ rows: UserType[]; rowCount: number }> {
 		const user = await pool.query(`SELECT * FROM users WHERE username = $1`, [
 			username,
 		]);
-		return { rowCount: user.rowCount ?? 0 };
+		await pool.query(
+			`UPDATE users 
+			SET last_login = NOW() 
+			WHERE username = $1`,
+			[username],
+		);
+		return { rows: user.rows, rowCount: user.rowCount ?? 0 };
 	}
 
 	// Nouvelle méthode pour mettre à jour la disponibilité d'un utilisateur

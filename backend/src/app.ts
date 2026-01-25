@@ -4,6 +4,7 @@
 import pool, { seed } from "./db/connection.js";
 import express from "express";
 import session from "express-session";
+import type { Session } from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import authorsRouter from "./routes/api/authors.js";
 import apiBookRouter from "./routes/api/books.js";
@@ -17,8 +18,7 @@ import cors from "cors";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = import.meta.dirname;
 
 // Initialiser la base de données avec seed si elle est vide
 async function initializeDatabase() {

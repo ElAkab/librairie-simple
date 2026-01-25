@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import type { Request, Response } from "express";
 
-export async function login(req, res) {
+export async function login(req: Request, res: Response) {
 	try {
 		// 1 : Récupération des données
 		let { username, password } = req.body;
@@ -13,7 +14,7 @@ export async function login(req, res) {
 		if (!username || !password)
 			return res.status(400).json({ message: "Champs manquants." });
 
-		// 3 : Authentification (à implémenter)
+		// 3 : Authentification
 		const user = await User.checkExistsByUsername(username);
 
 		if (user.rowCount === 0)
@@ -31,8 +32,9 @@ export async function login(req, res) {
 
 		// 4 : Création de la session
 		req.session.user = {
-			id: userId,
+			id: user.rows[0].id,
 			username: user.rows[0].username,
+			email: user.rows[0].email,
 			role: user.rows[0].role,
 		};
 

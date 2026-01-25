@@ -9,7 +9,7 @@ const authField = document.querySelector(".auth-field");
 const userMenu = document.querySelector(".user-menu");
 const span = document.querySelector(".main-container span");
 
-const isLoggedIn = !!(isUserAuth && isUserAuth.user);
+const isLoggedIn = !!(isUserAuth && isUserAuth.user); // Vérifie si l'utilisateur est authentifié
 const username =
 	isUserAuth && isUserAuth.user ? isUserAuth.user.username : undefined;
 

@@ -2,8 +2,9 @@ import bcrypt from "bcryptjs";
 import validator from "validator";
 import pool from "../db/connection.js";
 import User from "../models/user.js";
+import type { Request, Response } from "express";
 
-export async function signup(req, res) {
+export async function signup(req: Request, res: Response) {
 	try {
 		// 1 : Récupération des données
 		let { username, email, password } = req.body;
@@ -13,11 +14,15 @@ export async function signup(req, res) {
 		password = password.trim();
 
 		// 2 : Validation des champs et de l'unicité du username et de l'email
-		if (!username || !email || !password)
-			return res.status(400).json({ message: "Champs manquants." });
+		if (!username || !email || !password) {
+			res.status(400).json({ message: "Champs manquants." });
+			return;
+		}
 
-		if (!validator.isEmail(email))
-			return res.status(400).json({ message: "Addresse email invalide" });
+		if (!validator.isEmail(email)) {
+			res.status(400).json({ message: "Addresse email invalide" });
+			return;
+		}
 
 		const isUserStored = await pool.query(
 			`
@@ -27,8 +32,10 @@ export async function signup(req, res) {
 		);
 
 		// if (isUserStored) FAUX : ça sera toujours vrai (donc pas assez précis)
-		if (isUserStored.rows.length > 0)
-			return res.status(409).json({ message: "Utilisateur déjà inscrit !" });
+		if (isUserStored.rows.length > 0) {
+			res.status(409).json({ message: "Utilisateur déjà inscrit !" });
+			return;
+		}
 
 		// 3 : Hachage du mot de passe
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,22 +46,16 @@ export async function signup(req, res) {
 		// }
 
 		// 5 : Insertion des données dans la DB
-		await pool.query(
-			`
-			INSERT INTO users(username, email, password_hash, role) 
-			VALUES($1, $2, $3, $4)
-		`,
-			[username, email, hashedPassword, "user"],
-		); // role > user || admin
+		const newUser = await User.create(username, email, hashedPassword, "user");
 
 		req.session.user = {
-			username: username,
-			email: email,
-			role: "user",
+			id: newUser.id,
+			username: newUser.username,
+			email: newUser.email,
+			role: newUser.role,
 		};
 
-		// 6 : Réponse de succès
-		console.log("Nouvel utilisateur inscrit :", { username, email });
+		console.log("Nouvel utilisateur inscrit :", newUser);
 		res.status(201).json({ message: "Utilisateur inscrit avec succès." });
 	} catch (error) {
 		console.error("Erreur lors de l'inscription :", error);

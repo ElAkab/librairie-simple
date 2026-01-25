@@ -1,7 +1,12 @@
 import pool from "../db/connection.js";
+import type { Author as AuthorType } from "../db/database.js";
 
 class Author {
-	static async findAll(limit = 6, offset = 0, filtered = "") {
+	static async findAll(
+		limit: number = 6,
+		offset: number = 0,
+		filtered: string = "",
+	) {
 		const query = `
 			SELECT * FROM authors
 			${filtered ? "WHERE full_name ILIKE $3 OR nationality ILIKE $4" : ""}
