@@ -238,12 +238,10 @@ loansContainer.addEventListener("click", async (e) => {
 			});
 			if (!req.ok) throw new Error("Erreur lors de la suppression");
 
-			console.log("Emprunt supprimé, ID:", loanId);
+			// Retirer la carte de l'interface
+			loanCard.remove();
 
-			// Recharger la page actuelle de pagination
-			if (paginationInstance) {
-				paginationInstance.refresh();
-			}
+			console.log("Emprunt supprimé, ID:", loanId);
 		} catch (error) {
 			console.error("Erreur:", error);
 			alert("Impossible de supprimer l'emprunt");
@@ -260,7 +258,10 @@ loansContainer.addEventListener("click", async (e) => {
 		document.getElementById("edit-loan-status").value =
 			loan.loan_status || "active";
 		document.getElementById("borrower-name").value = loan.borrower_name || "";
-		document.getElementById("return-date").value = loan.return_date || "";
+		const returnDateInput = document.getElementById("return-date");
+		returnDateInput.value = loan.return_date
+			? loan.return_date.split("T")[0]
+			: "";
 
 		editLoanForm.dataset.loanId = loanId;
 		modal.showModal();
@@ -275,11 +276,20 @@ editLoanForm.addEventListener("submit", async (e) => {
 	e.preventDefault();
 
 	const loanId = editLoanForm.dataset.loanId;
+
+	const dateInput = document.getElementById("return-date").value;
+
+	const returnDateISO = dateInput
+		? new Date(`${dateInput}T00:00:00.000Z`).toISOString()
+		: null;
+
 	const formData = {
 		status: document.getElementById("edit-loan-status").value,
 		borrower_name: document.getElementById("borrower-name").value,
-		return_date: document.getElementById("return-date").value || null,
+		return_date: returnDateISO,
 	};
+
+	console.log("Données envoyées :", formData); // 👈 DEBUG UTILE
 
 	try {
 		const req = await fetch(`${API_URL}/api/loans/${loanId}`, {
@@ -291,14 +301,10 @@ editLoanForm.addEventListener("submit", async (e) => {
 		if (!req.ok) throw new Error("Erreur lors de la mise à jour");
 
 		const result = await req.json();
-		console.log("Emprunt mis à jour:", result);
+
+		window.location.reload();
 
 		modal.close();
-
-		// Recharger la page actuelle de pagination
-		if (paginationInstance) {
-			paginationInstance.refresh();
-		}
 	} catch (error) {
 		console.error("Erreur:", error);
 		alert("Impossible de mettre à jour l'emprunt");
