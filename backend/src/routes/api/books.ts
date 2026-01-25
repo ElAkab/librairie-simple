@@ -2,46 +2,56 @@ import express from "express";
 import Author from "../../models/author.js";
 import Book from "../../models/book.js";
 import pool from "../../db/connection.js";
+import type { Request, Response } from "express";
 
 const apibookRouter = express.Router();
 
+type BookQuery = {
+	page?: string;
+	limit?: string;
+	searched?: string;
+};
+
 // Récupérer tous les livres avec informations des auteurs
 // curl http://localhost:4000/api/books?page=1&limit=6
-apibookRouter.get("/", async (req, res) => {
-	try {
-		console.log("Query params:", req.query); // Debug
+apibookRouter.get(
+	"/",
+	async (req: Request<{}, unknown, {}, BookQuery>, res: Response) => {
+		try {
+			console.log("Query params:", req.query); // Debug
 
-		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 6;
-		const searched = req.query.searched || "";
-		const offset = (page - 1) * limit;
+			const page: number = Number(req.query.page) || 1;
+			const limit: number = Number(req.query.limit) || 6;
+			const searched: string = req.query.searched || "";
+			const offset: number = (page - 1) * limit;
 
-		const allBooks = await Book.findAllWithAuthors(limit, offset, searched);
-		const total = await Book.count();
+			const allBooks = await Book.findAllWithAuthors(limit, offset, searched);
+			const total = await Book.count();
 
-		console.table(allBooks);
-		res.status(200).json({
-			data: allBooks,
-			pagination: {
-				page,
-				limit,
-				total,
-				totalPages: Math.ceil(total / limit), // Total des pages (arrondi supérieur et division par limit)
-			},
-		});
-	} catch (error) {
-		console.error("Erreur lors de la récupération des livres :", error);
-		res.status(500).json({ message: "Impossible de récupérer les livres." });
-	}
-});
+			console.table(allBooks);
+			res.status(200).json({
+				data: allBooks,
+				pagination: {
+					page,
+					limit,
+					total,
+					totalPages: Math.ceil(total / limit), // Total des pages (arrondi supérieur et division par limit)
+				},
+			});
+		} catch (error) {
+			console.error("Erreur lors de la récupération des livres :", error);
+			res.status(500).json({ message: "Impossible de récupérer les livres." });
+		}
+	},
+);
 
 // Récupérer les livres disponibles
-apibookRouter.get("/available/:id", async (req, res) => {
+apibookRouter.get("/available/:id", async (req: Request, res: Response) => {
 	try {
-		const id = req.params.id;
+		const { id } = req.params;
 		const books = await pool.query(
 			`SELECT * FROM books WHERE available = true AND id = $1`,
-			[id],
+			[Number(id)],
 		);
 
 		console.table(books.rows);
@@ -53,7 +63,7 @@ apibookRouter.get("/available/:id", async (req, res) => {
 });
 
 // Créer un nouveau livre
-apibookRouter.post("/", async (req, res) => {
+apibookRouter.post("/", async (req: Request, res: Response) => {
 	try {
 		const { title, authorId, year } = req.body;
 
@@ -62,7 +72,7 @@ apibookRouter.post("/", async (req, res) => {
 				.status(400)
 				.json({ message: "Champs obligatoires manquants :/" });
 
-		const id = await Book.createBook(title, authorId, year);
+		const id = await Book.createBook(title, Number(authorId), Number(year));
 		res.status(201).json({ id, title, authorId, year });
 	} catch (error) {
 		console.error("Erreur lors de la création du livre :", error);
@@ -71,17 +81,17 @@ apibookRouter.post("/", async (req, res) => {
 });
 
 // Mettre à jour un livre
-apibookRouter.put("/:id", async (req, res) => {
+apibookRouter.put("/:id", async (req: Request, res: Response) => {
 	try {
 		const { title, year } = req.body;
-		const id = req.params.id;
+		const { id } = req.params;
 
 		if (!title || !year || !id)
 			return res
 				.status(400)
 				.json({ message: "Champs obligatoires manquants :/" });
 
-		const updatedBook = await Book.updateBook(title, year, id);
+		const updatedBook = await Book.updateBook(title, year, Number(id));
 
 		res.status(200).json({
 			message: "Book updated successfully",
@@ -95,16 +105,18 @@ apibookRouter.put("/:id", async (req, res) => {
 });
 
 // Supprimer un livre (cascade delete des loans grâce au schéma)
-apibookRouter.delete("/:id", async (req, res) => {
+apibookRouter.delete("/:id", async (req: Request, res: Response) => {
 	try {
-		const id = req.params.id;
+		const { id } = req.params;
 
 		if (!id)
 			return res.status(400).json({
 				message: "Aucune correspondance trouvé pour la suppression :/",
 			});
 
-		const result = await pool.query("DELETE FROM books WHERE id = $1", [id]);
+		const result = await pool.query("DELETE FROM books WHERE id = $1", [
+			Number(id),
+		]);
 
 		res.status(200).json({
 			message: "Livre et ses emprunts supprimés avec succès.",
@@ -117,7 +129,7 @@ apibookRouter.delete("/:id", async (req, res) => {
 });
 
 // Récupérer tous les livres (endpoint alternatif)
-apibookRouter.get("/all", async (req, res) => {
+apibookRouter.get("/all", async (req: Request, res: Response) => {
 	try {
 		const books = await Book.findAll();
 		res.status(200).json(books);
@@ -128,10 +140,10 @@ apibookRouter.get("/all", async (req, res) => {
 });
 
 // Récupérer un livre par son ID
-apibookRouter.get("/:id", async (req, res) => {
+apibookRouter.get("/:id", async (req: Request, res: Response) => {
 	try {
-		const id = req.params.id;
-		const book = await Book.findById(id);
+		const { id } = req.params;
+		const book = await Book.findById(Number(id));
 
 		if (!book) {
 			return res.status(404).json({ error: "Book not found" });
