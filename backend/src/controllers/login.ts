@@ -24,25 +24,25 @@ export async function login(req: Request, res: Response) {
 			return;
 		}
 
-		       const passwordCompared = await bcrypt.compare(
-			       password,
-			       user.rows[0]!.password_hash,
-		       );
+		const passwordCompared = await bcrypt.compare(
+			password,
+			user.rows[0]!.password_hash,
+		);
 
 		if (!passwordCompared) {
 			res.status(400).json({ message: "Mot de passe invalide :/..." });
 			return;
 		}
 
-			   const userId = user.rows[0]!.id;
+		const userId = user.rows[0]!.id;
 
 		// 4 : Création de la session
-		       req.session.user = {
-			       id: user.rows[0]!.id,
-			       username: user.rows[0]!.username,
-			       email: user.rows[0]!.email,
-			       role: user.rows[0]!.role,
-		       };
+		req.session.user = {
+			id: user.rows[0]!.id,
+			username: user.rows[0]!.username,
+			email: user.rows[0]!.email,
+			role: user.rows[0]!.role,
+		};
 
 		// Rendre la colonne "is_active" d'un utilisateur à true lors de la déconnexion
 		await User.updateAvailabilityById(userId, { is_active: true });
