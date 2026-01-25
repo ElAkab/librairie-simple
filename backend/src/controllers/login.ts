@@ -11,22 +11,28 @@ export async function login(req: Request, res: Response) {
 		password = password.trim();
 
 		// 2 : Validation des champs
-		if (!username || !password)
-			return res.status(400).json({ message: "Champs manquants." });
+		if (!username || !password) {
+			res.status(400).json({ message: "Champs manquants." });
+			return;
+		}
 
 		// 3 : Authentification
 		const user = await User.checkExistsByUsername(username);
 
-		if (user.rowCount === 0)
-			return res.status(404).json({ message: "Utilisateur non trouvé :/..." });
+		if (user.rowCount === 0) {
+			res.status(404).json({ message: "Utilisateur non trouvé :/..." });
+			return;
+		}
 
 		const passwordCompared = await bcrypt.compare(
 			password,
 			user.rows[0].password_hash,
 		);
 
-		if (!passwordCompared)
-			return res.status(400).json({ message: "Mot de passe invalide :/..." });
+		if (!passwordCompared) {
+			res.status(400).json({ message: "Mot de passe invalide :/..." });
+			return;
+		}
 
 		const userId = user.rows[0].id;
 

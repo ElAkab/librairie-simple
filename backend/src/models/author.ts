@@ -6,7 +6,7 @@ class Author {
 		limit: number = 6,
 		offset: number = 0,
 		filtered: string = "",
-	) {
+	): Promise<{ rows: AuthorType[] }> {
 		const query = `
 			SELECT * FROM authors
 			${filtered ? "WHERE full_name ILIKE $3 OR nationality ILIKE $4" : ""}
@@ -18,40 +18,48 @@ class Author {
 			: [limit, offset];
 
 		const result = await pool.query(query, params);
-		return result.rows;
+		return { rows: result.rows || [] };
 	}
 
-	static async count() {
+	static async count(): Promise<{ count: number }> {
 		const result = await pool.query("SELECT COUNT(*) as count FROM authors");
-		return parseInt(result.rows[0].count);
+		return { count: parseInt(result.rows[0].count ?? 0) };
 	}
 
-	static async findById(id) {
+	static async findById(id: number): Promise<AuthorType | null> {
 		const result = await pool.query("SELECT * FROM authors WHERE id = $1", [
 			id,
 		]);
 		return result.rows[0] ?? null;
 	}
 
-	static async createAuthor(full_name, birth_year, nationality) {
+	static async createAuthor(
+		full_name: string,
+		birth_year: number,
+		nationality: string,
+	): Promise<AuthorType | null> {
 		const result = await pool.query(
-			"INSERT INTO authors (full_name, birth_year, nationality) VALUES ($1, $2, $3) RETURNING id",
+			"INSERT INTO authors (full_name, birth_year, nationality) VALUES ($1, $2, $3) RETURNING *",
 			[full_name, birth_year, nationality],
 		);
-		return result.rows[0].id;
+		return result.rows[0] ?? null;
 	}
 
-	static async updateAuthor(full_name, nationality, id) {
+	static async updateAuthor(
+		full_name: string,
+		nationality: string,
+		id: number,
+	): Promise<number | null> {
 		const result = await pool.query(
 			"UPDATE authors SET full_name = $1, nationality = $2 WHERE id = $3",
 			[full_name, nationality, id],
 		);
-		return result.rowCount;
+		return result.rowCount || null;
 	}
 
-	static async deleteById(id) {
+	static async deleteById(id: number): Promise<number | null> {
 		const result = await pool.query("DELETE FROM authors WHERE id = $1", [id]);
-		return result.rowCount;
+		return result.rowCount || null;
 	}
 }
 
