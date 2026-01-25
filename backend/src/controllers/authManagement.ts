@@ -1,19 +1,23 @@
 import User from "../models/user.js";
+import type { User as UserType } from "../db/database.js";
+import type { Request, Response } from "express";
 
-export async function getUserById(req, res) {
+export async function getUserById(req: Request, res: Response): Promise<void> {
 	try {
 		const { id } = req.params;
-		const result = await User.getById(id);
 
-		if (result.rows.length === 0) {
-			return res.status(404).json({
+		const result: UserType | null = await User.getById(Number(id));
+
+		if (!result) {
+			res.status(404).json({
 				message: "Utilisateur non trouvé.",
 			});
+			return;
 		}
 
 		res.status(200).json({
 			message: "Utilisateur récupéré avec succès.",
-			result: result.rows[0], // Renvoie le premier (et unique) utilisateur trouvé
+			result: result, // Renvoie le premier (et unique) utilisateur trouvé
 			isAuth: true,
 		});
 	} catch (error) {
@@ -24,19 +28,20 @@ export async function getUserById(req, res) {
 	}
 }
 
-export async function getAllUsers(req, res) {
+export async function getAllUsers(req: Request, res: Response): Promise<void> {
 	try {
-		const result = await User.getAll();
+		const result: { users: UserType[] } = await User.getAll();
 
-		if (result.rows.length === 0) {
-			return res.status(404).json({
+		if (result.users.length === 0) {
+			res.status(404).json({
 				message: "Aucun utilisateur trouvé.",
 			});
+			return;
 		}
 
 		res.status(200).json({
 			message: "Utilisateurs récupérés avec succès.",
-			result: result.rows,
+			result: result.users,
 		});
 	} catch (error) {
 		console.error("Erreur lors de la récupération des utilisateurs :", error);
@@ -46,18 +51,22 @@ export async function getAllUsers(req, res) {
 	}
 }
 
-export async function updateUsername(req, res) {
+export async function updateUsername(
+	req: Request,
+	res: Response,
+): Promise<void> {
 	try {
 		const { id } = req.params;
 		const { newUsername } = req.body;
-		const updateResult = await User.updateUsernameById(id, {
+		const updateResult = await User.updateUsernameById(Number(id), {
 			username: newUsername,
 		});
 
 		if (updateResult.rowCount === 0) {
-			return res.status(404).json({
+			res.status(404).json({
 				message: "Utilisateur non trouvé.",
 			});
+			return;
 		}
 
 		res.status(200).json({
@@ -75,25 +84,27 @@ export async function updateUsername(req, res) {
 	}
 }
 
-export async function logoutById(req, res) {
+export async function logoutById(req: Request, res: Response): Promise<void> {
+	// Peut retourner une réponse ou undefined
 	try {
 		const { id } = req.params;
 
-		const userResult = await User.getById(id);
-
-		if (userResult.rows.length === 0) {
-			return res.status(404).json({
+		const userResult = await User.getById(Number(id));
+		if (!userResult) {
+			res.status(404).json({
 				message: "Utilisateur non trouvé.",
 			});
+			return;
 		}
 
 		// Rendre la colonne "is_active" d'un utilisateur à false lors de la déconnexion
-		await User.updateAvailabilityById(id, { is_active: false });
+		await User.updateAvailabilityById(Number(id), { is_active: false });
 
 		// Détruire la session de l'utilisateur
-		req.session.destroy(() => {
-			res.json({ message: "Déconnexion réussie (-_-)/)..." });
-		});
+		if (req.session)
+			req.session.destroy(() => {
+				res.json({ message: "Déconnexion réussie (-_-)/)..." });
+			});
 	} catch (error) {
 		console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
 		res.status(500).json({
@@ -102,16 +113,16 @@ export async function logoutById(req, res) {
 	}
 }
 
-export async function deleteById(req, res) {
+export async function deleteById(req: Request, res: Response): Promise<void> {
 	try {
 		const { id } = req.params;
 
-		const deleteResult = await User.deleteById(id);
-
+		const deleteResult = await User.deleteById(Number(id));
 		if (deleteResult.rowCount === 0) {
-			return res.status(404).json({
+			res.status(404).json({
 				message: "Utilisateur non trouvé.",
 			});
+			return;
 		}
 
 		res.json({
@@ -125,19 +136,20 @@ export async function deleteById(req, res) {
 	}
 }
 
-export async function clearUsers(req, res) {
+export async function clearUsers(req: Request, res: Response): Promise<void> {
 	try {
-		if (!(await User.getAll()).rows.length) {
-			return res.status(404).json({
+		if (!(await User.count()).count) {
+			res.status(404).json({
 				message: "Aucun utilisateur trouvé.",
 			});
+			return;
 		}
 
 		const result = await User.clear();
 
 		res.status(205).json({
 			message: "Utilisateurs supprimés avec succès.",
-			result: result.rows,
+			result: result.rowCount,
 		});
 	} catch (error) {
 		console.error("Erreur lors de la suppression des utilisateurs :", error);

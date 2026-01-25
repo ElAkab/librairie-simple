@@ -16,7 +16,7 @@ export async function login(req, res) {
 		// 3 : Authentification (à implémenter)
 		const user = await User.checkExistsByUsername(username);
 
-		if (user.rows.length === 0)
+		if (user.rowCount === 0)
 			return res.status(404).json({ message: "Utilisateur non trouvé :/..." });
 
 		const passwordCompared = await bcrypt.compare(

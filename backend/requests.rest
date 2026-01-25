@@ -145,6 +145,9 @@ Content-Type: application/json
 ### Récupérer tous les utilisateurs
 GET http://localhost:3000/api/auth/all
 
+### Récupérer un utilisateur par ID
+GET http://localhost:3000/api/auth/5
+
 ### Mettre à jour un utilisateur
 PUT http://localhost:3000/api/auth/update/5
 Content-Type: application/json
