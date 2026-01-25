@@ -133,7 +133,7 @@ async function fetchLoans(page = 1, filter = "") {
 	const params = new URLSearchParams({
 		page,
 		limit: 6,
-		...(filter && { filtered: filter }),
+		...(filter && { searched: filter }),
 	});
 
 	const response = await fetch(`${API_URL}/api/loans?${params.toString()}`);
