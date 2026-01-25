@@ -14,12 +14,12 @@ class User {
 		email: string,
 		hashedPassword: string,
 		role: "user" | "admin",
-	): Promise<UserType> {
+	): Promise<UserType | undefined> {
 		const result = await pool.query<UserType>(
 			`INSERT INTO users(username, email, password_hash, role) VALUES($1, $2, $3, $4) RETURNING *`,
 			[username, email, hashedPassword, role],
 		);
-		return result.rows[0]; // renvoie un seul utilisateur
+		return result.rows[0] || undefined; // renvoie un seul utilisateur
 	}
 
 	static async getById(id: number): Promise<UserType | null> {
