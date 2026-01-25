@@ -31,13 +31,15 @@ async function initializeDatabase() {
 			await seed();
 		} else {
 			console.log(`✅ Base de données déjà peuplée (${count} livres)`);
-			
+
 			// Vérifier que la table users existe aussi
 			try {
 				const userCheck = await pool.query("SELECT COUNT(*) FROM users");
-				console.log(`✅ Table users OK (${userCheck.rows[0].count} utilisateurs)`);
+				console.log(
+					`✅ Table users OK (${userCheck.rows[0].count} utilisateurs)`,
+				);
 			} catch (userErr) {
-				if (userErr.code === "42P01") {
+				if ((userErr as any).code === "42P01") {
 					console.log("⚠️  Table users manquante, re-seed...");
 					await seed();
 				} else {
@@ -47,9 +49,9 @@ async function initializeDatabase() {
 		}
 	} catch (err) {
 		console.error("❌ Erreur complète:", err);
-		console.error("Code erreur:", err.code);
+		console.error("Code erreur:", (err as any).code);
 		// Si les tables n'existent pas encore, exécuter le seed
-		if (err.code === "42P01") {
+		if ((err as any).code === "42P01") {
 			// Code PostgreSQL pour "table inexistante"
 			console.log("🔧 Tables inexistantes, création et seed...");
 			await seed();

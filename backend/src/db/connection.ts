@@ -1,19 +1,22 @@
 // db.js
 import { Pool } from "pg";
+// import type { PoolClient } from "pg"; // Si besoin de typer les clients
 import dotenv from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { join } from "path";
 import { readFileSync } from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = import.meta.filename; // Pas besoin de cette ligne normalement
+const __dirname = import.meta.dirname;
 
 dotenv.config({ path: join(__dirname, "../../.env") });
 
 // Create a new pool instance using environment variables
-const pool = new Pool({
+const pool: Pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
-	ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+	ssl:
+		process.env.NODE_ENV === "production"
+			? { rejectUnauthorized: false }
+			: false,
 	// host: process.env.DB_HOST,
 	// port: process.env.DB_PORT,
 	// user: process.env.DB_USER,
