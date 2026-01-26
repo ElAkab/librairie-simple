@@ -1,6 +1,6 @@
 import pool from "../db/connection.ts";
 
-console.log("🔍 Validation du schéma de la base de données PostgreSQL...\n");
+console.log("🔍 Validation du schéma de la base de données PostgreSQL..\n");
 
 // Skip validation en local si pas de DATABASE_URL
 if (!process.env.DATABASE_URL) {
