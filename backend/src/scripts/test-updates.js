@@ -1,4 +1,4 @@
-import db from "../db/connection.js";
+import db from "../db/connection.ts";
 
 const alterLoanTable = `
 	-- 0. Nettoyer si la table temporaire existe déjà
@@ -32,7 +32,7 @@ try {
 } catch (error) {
 	console.error(
 		"Erreur lors de la mise à jour de la table 'loans':",
-		error.message
+		error.message,
 	);
 	process.exit(1);
 }

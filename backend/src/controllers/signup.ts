@@ -48,12 +48,12 @@ export async function signup(req: Request, res: Response) {
 		// 5 : Insertion des données dans la DB
 		const newUser = await User.create(username, email, hashedPassword, "user");
 
-		       req.session.user = {
-			       id: newUser!.id,
-			       username: newUser!.username,
-			       email: newUser!.email,
-			       role: newUser!.role,
-		       };
+		req.session.user = {
+			id: newUser!.id,
+			username: newUser!.username,
+			email: newUser!.email,
+			role: newUser!.role,
+		};
 
 		console.log("Nouvel utilisateur inscrit :", newUser);
 		res.status(201).json({ message: "Utilisateur inscrit avec succès." });
