@@ -48,7 +48,7 @@ DELETE http://localhost:3000/api/books/2
 GET http://localhost:3000/api/authors
 
 ### Récupère des auteurs
-GET http://localhost:3000/api/authors?page=1&limit=6&searched=Har
+GET http://localhost:3000/api/authors?page=1&limit=6&searched=lee
 
 ### Récupère un auteur de par son id
 GET http://localhost:3000/api/authors/4
