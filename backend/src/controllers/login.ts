@@ -49,7 +49,7 @@ export async function login(req: Request, res: Response) {
 
 		// 5 : Réponse de succès
 		res.status(200).json({
-			message: "Connexion réussie !",
+			message: `Bienvenue ${username} !`,
 			user: req.session.user, // Renvoie les informations de l'utilisateur connecté pour le frontend
 		});
 	} catch (error) {

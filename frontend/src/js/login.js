@@ -18,8 +18,6 @@ form.addEventListener("submit", async (e) => {
 		password,
 	};
 
-	console.log("Payload de connexion :", payload);
-
 	await sendData(payload);
 });
 
@@ -37,11 +35,7 @@ async function sendData(data) {
 		}
 
 		const res = await req.json();
-
-		console.log("Réponse du serveur :", res);
-		alert(
-			"Connexion réussie ! Vous pouvez maintenant accéder à l'application.",
-		);
+		alert(res.message);
 
 		localStorage.setItem("userId", res.user.id);
 		localStorage.setItem("username", res.user.username);

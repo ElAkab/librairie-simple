@@ -36,7 +36,7 @@ async function sendData(data) {
 		const response = await req.json();
 
 		console.log("Réponse du serveur :", response);
-		alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+		alert(response.message);
 
 		window.location.href = "/";
 	} catch (error) {
