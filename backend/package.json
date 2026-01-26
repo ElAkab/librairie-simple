@@ -2,17 +2,17 @@
 	"name": "sql-library-backend",
 	"version": "0.1.0",
 	"description": "Simple SQL-based library backend built with Node.js and Express",
-	"main": "src/app.js",
+	"main": "dist/app.js",
 	"type": "module",
 	"scripts": {
-		"start": "node src/app.js",
-		"dev": "node --watch src/app.js",
-		"dev:ts": "tsx watch src/app.ts",
+		"start": "node dist/app.js",
+		"dev": "tsx watch src/app.ts",
 		"db:reset": "node --loader ts-node/esm src/scripts/reset-db.ts",
 		"db:check": "node src/scripts/check-tables.js",
-		"lint": "node --check src/**/*.js",
+		"lint": "tsc --noEmit",
 		"validate-db": "node src/scripts/validate-schema.js",
 		"check-types": "npx tsc --noEmit",
+		"build": "npx tsc",
 		"watch-types": "npx tsc --watch"
 	},
 	"keywords": [
