@@ -15,12 +15,6 @@ const username =
 authField.style.display = isLoggedIn ? "none" : "flex";
 userMenu.style.display = isLoggedIn ? "inline-block" : "none";
 
-if (span && isLoggedIn) {
-	span.textContent = username
-		? `Ta gueule ${username} !`
-		: "Donc faudrait la fermer un moment..";
-}
-
 // ==============================
 // Gestion du menu utilisateur
 // ==============================
@@ -128,9 +122,6 @@ resetSearch.addEventListener("click", async () => {
 	}
 });
 
-// =================================================================
-// Gestion de la pagination
-// =================================================================
 async function fetchAuthors(page = 1, filter = "") {
 	try {
 		const params = new URLSearchParams({
@@ -153,8 +144,9 @@ async function fetchAuthors(page = 1, filter = "") {
 
 function renderAuthors(authors) {
 	authorsField.innerHTML = "";
+	const authorsArray = authors.rows || authors; // Supporter les deux formats
 
-	authors.rows.forEach((author) => {
+	authorsArray.forEach((author) => {
 		const card = `
 			<div class="author-card">
 				<span id="badge-author-id">${author.id}</span>
