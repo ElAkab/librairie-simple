@@ -6,7 +6,7 @@ class Author {
 		limit: number = 6,
 		offset: number = 0,
 		filtered: string = "",
-	): Promise<{ rows: AuthorType[] }> {
+	): Promise<{ rows: AuthorType[] | [] }> {
 		const query = `
 			SELECT * FROM authors
 			${filtered ? "WHERE full_name ILIKE $3 OR nationality ILIKE $4" : ""}

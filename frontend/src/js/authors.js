@@ -98,7 +98,7 @@ async function getSearchResults() {
 		searchInput.value = "";
 
 		const response = await fetchAuthors(1, searchValue);
-		renderAuthors(response.data.rows);
+		renderAuthors(response.data);
 	} catch (error) {
 		console.error("Erreur lors de la recherche :", error);
 		alert("Erreur lors de la recherche des auteurs");
@@ -110,7 +110,7 @@ resetSearch.addEventListener("click", async () => {
 		resetSearch.style.display = "none";
 
 		const response = await fetchAuthors(1);
-		renderAuthors(response.data.rows);
+		renderAuthors(response.data);
 
 		pagination.resetToFirstPage();
 	} catch (error) {
@@ -144,7 +144,7 @@ async function fetchAuthors(page = 1, filter = "") {
 
 function renderAuthors(authors) {
 	authorsField.innerHTML = "";
-	const authorsArray = authors.rows || authors; // Supporter les deux formats
+	const authorsArray = authors.data || authors; // Supporter les deux formats
 
 	authorsArray.forEach((author) => {
 		const card = `
