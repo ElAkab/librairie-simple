@@ -283,8 +283,6 @@ editLoanForm.addEventListener("submit", async (e) => {
 		return_date: returnDateISO,
 	};
 
-	console.log("Données envoyées :", formData); // 👈 DEBUG UTILE
-
 	try {
 		const req = await fetch(`${API_URL}/api/loans/${loanId}`, {
 			method: "PATCH",

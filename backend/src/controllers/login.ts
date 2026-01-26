@@ -2,20 +2,6 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import type { Request, Response } from "express";
 
-// Étendre la définition de SessionData pour inclure 'user'
-import "express-session";
-
-declare module "express-session" {
-	interface SessionData {
-		user?: {
-			id: number;
-			username: string;
-			email: string;
-			role: string;
-		};
-	}
-}
-
 export async function login(req: Request, res: Response) {
 	try {
 		// 1 : Récupération des données

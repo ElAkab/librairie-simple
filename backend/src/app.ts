@@ -4,7 +4,7 @@
 import pool, { seed } from "./db/connection.js";
 import express from "express";
 import session from "express-session";
-import type { Session } from "express-session";
+
 import connectPgSimple from "connect-pg-simple";
 import authorsRouter from "./routes/api/authors.js";
 import apiBookRouter from "./routes/api/books.js";

@@ -23,13 +23,13 @@ authorsRouter.get(
 			const table = await Author.findAll(limit, offset, searched);
 			const total = await Author.count();
 
-			console.table(table);
+			console.table(table.rows);
 			res.status(200).json({
-				data: table,
+				data: table.rows,
 				pagination: {
 					page,
 					limit,
-					total,
+					total: total.count,
 					totalPages: Math.ceil(total.count / limit),
 				},
 			});
