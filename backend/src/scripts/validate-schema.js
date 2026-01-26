@@ -1,4 +1,4 @@
-import pool from "../db/connection.ts";
+import pool from "../db/connection";
 
 console.log("🔍 Validation du schéma de la base de données PostgreSQL...\n");
 
