@@ -10,7 +10,7 @@
 		"db:reset": "node --loader ts-node/esm src/scripts/reset-db.ts",
 		"db:check": "node src/scripts/check-tables.js",
 		"lint": "tsc --noEmit",
-		"validate-db": "node src/scripts/validate-schema.js",
+		"validate-db": "node dist/scripts/validate-schema.js",
 		"check-types": "npx tsc --noEmit",
 		"build": "npx tsc",
 		"watch-types": "npx tsc --watch"
