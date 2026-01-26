@@ -1,7 +1,22 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import type { Request, Response } from "express";
 
-export async function login(req, res) {
+// Étendre la définition de SessionData pour inclure 'user'
+import "express-session";
+
+declare module "express-session" {
+	interface SessionData {
+		user?: {
+			id: number;
+			username: string;
+			email: string;
+			role: string;
+		};
+	}
+}
+
+export async function login(req: Request, res: Response) {
 	try {
 		// 1 : Récupération des données
 		let { username, password } = req.body;
@@ -10,30 +25,37 @@ export async function login(req, res) {
 		password = password.trim();
 
 		// 2 : Validation des champs
-		if (!username || !password)
-			return res.status(400).json({ message: "Champs manquants." });
+		if (!username || !password) {
+			res.status(400).json({ message: "Champs manquants." });
+			return;
+		}
 
-		// 3 : Authentification (à implémenter)
+		// 3 : Authentification
 		const user = await User.checkExistsByUsername(username);
 
-		if (user.rows.length === 0)
-			return res.status(404).json({ message: "Utilisateur non trouvé :/..." });
+		if (user.rowCount === 0) {
+			res.status(404).json({ message: "Utilisateur non trouvé :/..." });
+			return;
+		}
 
 		const passwordCompared = await bcrypt.compare(
 			password,
-			user.rows[0].password_hash,
+			user.rows[0]!.password_hash,
 		);
 
-		if (!passwordCompared)
-			return res.status(400).json({ message: "Mot de passe invalide :/..." });
+		if (!passwordCompared) {
+			res.status(400).json({ message: "Mot de passe invalide :/..." });
+			return;
+		}
 
-		const userId = user.rows[0].id;
+		const userId = user.rows[0]!.id;
 
 		// 4 : Création de la session
 		req.session.user = {
-			id: userId,
-			username: user.rows[0].username,
-			role: user.rows[0].role,
+			id: user.rows[0]!.id,
+			username: user.rows[0]!.username,
+			email: user.rows[0]!.email,
+			role: user.rows[0]!.role,
 		};
 
 		// Rendre la colonne "is_active" d'un utilisateur à true lors de la déconnexion

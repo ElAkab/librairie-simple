@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     role VARCHAR(20) DEFAULT 'user',
     created_at TIMESTAMP DEFAULT NOW(),
-    last_login TIMESTAMP,
+    last_login TIMESTAMP DEFAULT NOW(),
     is_active BOOLEAN DEFAULT true,
     CHECK (role IN ('user', 'admin'))
 );

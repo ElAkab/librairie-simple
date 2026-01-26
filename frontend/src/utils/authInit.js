@@ -2,11 +2,12 @@ import API_URL from "../js/config.js";
 
 export async function isAuth() {
 	const userId = localStorage.getItem("userId");
+
 	if (!userId) return false;
 
 	try {
 		const response = await fetch(`${API_URL}/api/auth/${userId}`, {
-			credentials: "include",
+			credentials: "include", // Inclure les cookies pour la session
 		});
 
 		if (!response.ok) return false;

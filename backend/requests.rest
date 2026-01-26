@@ -47,6 +47,9 @@ DELETE http://localhost:3000/api/books/2
 ### Récupère la liste des auteurs
 GET http://localhost:3000/api/authors
 
+### Récupère des auteurs
+GET http://localhost:3000/api/authors?page=1&limit=6&searched=Har
+
 ### Récupère un auteur de par son id
 GET http://localhost:3000/api/authors/4
 
@@ -128,9 +131,9 @@ POST http://localhost:3000/api/auth/signup
 Content-Type: application/json
 
 {
-    "username": "testUser",
-    "email": "testUser@gmail.com",
-    "password": "123"
+    "username": "Bob-lep",
+    "email": "lep@gmail.com",
+    "password": "1234"
 }
 
 ### Connection
@@ -142,15 +145,24 @@ Content-Type: application/json
     "password": "123"
 }
 
+### Déconnection
+POST http://localhost:3000/api/auth/logout/:id
+
 ### Récupérer tous les utilisateurs
 GET http://localhost:3000/api/auth/all
+
+### Récupérer un utilisateur par ID
+GET http://localhost:3000/api/auth/8
+
+### Supprimer un utilisateur par ID
+DELETE http://localhost:3000/api/auth/5
 
 ### Mettre à jour un utilisateur
 PUT http://localhost:3000/api/auth/update/5
 Content-Type: application/json
 
 {
-    "newUsername": "testUser"
+    "newUsername": "textUser"
 }
 
 ### Supprimer tous les utilisateurs

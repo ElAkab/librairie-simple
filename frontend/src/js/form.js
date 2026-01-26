@@ -14,12 +14,6 @@ const username =
 authField.style.display = isLoggedIn ? "none" : "flex";
 userMenu.style.display = isLoggedIn ? "inline-block" : "none";
 
-if (span && isLoggedIn) {
-	span.textContent = username
-		? `Ta gueule ${username} !`
-		: "Donc faudrait la fermer un moment..";
-}
-
 // ==============================
 // Gestion du menu utilisateur
 // ==============================
